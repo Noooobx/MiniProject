@@ -4,6 +4,10 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
+    "install": "cd frontend && npm install && npm install",
+    "start": "node backend/src/app.js & cd frontend && npm run dev",
+    "server": "nodemon backend/src/app.js",
+    "frontend": "cd frontend && npm run dev",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",

@@ -12,16 +12,6 @@ A web application designed to empower farmers by enabling them to directly sell 
 
 ---
 
-## Technologies Used
-
-- **Frontend**: HTML, CSS, JavaScript (React)
-- **Backend**: Node.js, Express
-- **Database**: MongoDB
-- **Authentication**: JWT (JSON Web Tokens) for secure authentication
-- **Payment Integration**: Stripe (for secure transactions)
-
----
-
 ## Getting Started
 
 ### Installation
@@ -43,24 +33,12 @@ A web application designed to empower farmers by enabling them to directly sell 
 
 4. **Start the development server**:
    ```bash
-   npm run dev
+   npm run start
    ```
    This will start both the frontend and backend development servers.
 
 5. Open your browser and go to `http://localhost:3000` to view the app.
 
----
-
-## Usage
-
-1. **Farmers**: 
-   - Register as a farmer to list your crops, update prices, and manage orders.
-   
-2. **Consumers**: 
-   - Browse crops by type, location, or availability and purchase directly from farmers.
-
-3. **Admin (Optional)**: 
-   - Manage users, crops, and orders.
 
 ---
 
