@@ -18,8 +18,9 @@ A web application designed to empower farmers by enabling them to directly sell 
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/your-username/directfarm.git
-   cd directfarm
+   git clone https://github.com/Noooobx/MiniProject.git
+   cd MiniProject
+
    ```
 
 2. **Install dependencies**:
