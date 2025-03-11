@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Menu, X, Plus } from "lucide-react"; // Icons
+import { Menu, X, Plus, User } from "lucide-react"; // Icons
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -23,6 +23,13 @@ export default function Navbar() {
             className="flex items-center gap-2 px-5 py-2 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition"
           >
             <Plus size={18} /> Sell
+          </Link>
+          {/* Profile Icon */}
+          <Link to="/profile" className="flex items-center gap-2 hover:text-green-600 transition">
+            <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
+              <User size={20} className="text-gray-700" />
+            </div>
+            My Profile
           </Link>
         </div>
 
@@ -68,6 +75,12 @@ export default function Navbar() {
             onClick={() => setMenuOpen(false)}
           >
             <Plus size={18} /> Sell
+          </Link>
+          <Link to="/profile" className="flex items-center gap-2 hover:text-green-600 transition" onClick={() => setMenuOpen(false)}>
+            <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
+              <User size={20} className="text-gray-700" />
+            </div>
+            My Profile
           </Link>
         </div>
       </div>

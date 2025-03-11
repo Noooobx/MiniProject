@@ -7,6 +7,11 @@ import Inventory from "./Components/Inventory";
 import Earnings from "./Components/Earnings";
 import Messages from "./Components/Messages";
 import Reviews from "./Components/Reviews";
+import Auction from "./Components/Auction";
+import Help from "./Components/Help";
+import Profile from "./Components/Profile";
+import Chatbot from "./Components/chatbot";
+import Buy from "./Components/Buy";
 
 function App() {
   return (
@@ -21,6 +26,11 @@ function App() {
         <Route path="/earnings" element={<Earnings />} />
         <Route path="/messages" element={<Messages />} />
         <Route path="/reviews" element={<Reviews />} />
+        <Route path="/Auction" element={<Auction />} />
+        <Route path="/Help" element={<Help />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/bot" element={<Chatbot />} />
+        <Route path="/Buy" element={<Buy />} />
       </Routes>
     </BrowserRouter>
   );

@@ -1,16 +1,12 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { Home, ShoppingCart, BarChart, Users } from "lucide-react";
 
 export default function Dashboard() {
-
   return (
     <div className="flex h-screen items-center bg-gray-100">
       {/* Sidebar */}
-      {/* <div
-        className={`fixed inset-y-0 left-0 z-50 bg-white shadow-lg w-64 transform ${
-          sidebarOpen ? "translate-x-0" : "-translate-x-full"
-        } transition-transform duration-300 ease-in-out md:translate-x-0 md:static`}
-      >
+      <div className="fixed inset-y-0 left-0 z-50 bg-white shadow-lg w-64 transition-transform duration-300 ease-in-out md:translate-x-0 md:static">
         <div className="flex justify-between items-center p-5 border-b">
           <h2 className="text-xl font-bold text-green-600">Farm Direct</h2>
         </div>
@@ -30,12 +26,16 @@ export default function Dashboard() {
             </Link>
           ))}
         </nav>
-      </div> */}
+      </div>
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col">
+        {/* Top Navbar */}
+        <header className="bg-white shadow-md p-4 flex items-center justify-between">
+          <h1 className="text-xl font-bold text-gray-700">Dashboard</h1>
+        </header>
+
         {/* Dashboard Overview */}
-        
         <main className="p-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
           {[
             { title: "Total Orders", value: "120" },
