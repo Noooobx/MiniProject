@@ -1,18 +1,29 @@
 import express from "express";
 import dotenv from "dotenv";
-import connectDb from "./config/database.js";
+import connectDB from "./config/database.js";
+import path from "path";
+import { fileURLToPath } from "url";
+import authRouter from "./routes/auth.js";
+import listingRouter from "./routes/listing.js";
 
-dotenv.config();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-const app = express();
+dotenv.config({ path: path.join(__dirname, "../../.env") });
 
-const PORT = process.env.PORT || 3000;
+const app = express(); 
+app.use(express.json());  
+
+app.use("/api/auth", authRouter);
+app.use("/api/product", listingRouter);
+
+const PORT = process.env.PORT ;
 
 app.get("/", (req, res) => {
   res.send("Hello, World! This is your demo server!");
 });
 
-connectDb()
+connectDB()
   .then(() => {
     console.log("Succesfully connected to the database");
     app.listen(PORT, () => {

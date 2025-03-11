@@ -5,46 +5,30 @@ import Dashboard from "./Dashboard";
 const Sell = () => {
   return (
     <div 
-      className="p-6 min-h-screen bg-cover bg-center" 
+      className="p-6 min-h-screen bg-cover bg-center bg-gray-100"
       style={{ backgroundImage: "url('/3.jpg')" }}
     >
       <Dashboard />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
-        <Link to="/inventory" className="block bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition">
-          <h2 className="text-xl font-semibold">Inventory</h2>
-          <p className="text-gray-600">Manage your products and stock.</p>
-        </Link>
-
-        <Link to="/earnings" className="block bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition">
-          <h2 className="text-xl font-semibold">Earnings</h2>
-          <p className="text-gray-600">View your earnings and sales reports.</p>
-        </Link>
-
-        <Link to="/messages" className="block bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition">
-          <h2 className="text-xl font-semibold">Messages</h2>
-          <p className="text-gray-600">Check messages from buyers.</p>
-        </Link>
-
-        <Link to="/reviews" className="block bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition">
-          <h2 className="text-xl font-semibold">Reviews</h2>
-          <p className="text-gray-600">See feedback from customers.</p>
-        </Link>
-
-        <Link to="/Auction" className="block bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition">
-          <h2 className="text-xl font-semibold">Auction</h2>
-          <p className="text-gray-600">Start Your Auction Here</p>
-        </Link>
-
-        <Link to="/Help" className="block bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition">
-          <h2 className="text-xl font-semibold">Help and Support</h2>
-          <p className="text-gray-600">If Any Queries Follow This</p>
-        </Link>
-        <Link to="/bot" className="block bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition">
-          <h2 className="text-xl font-semibold">Chat Bot 24/7</h2>
-          <p className="text-gray-600">Hey I am Here For You...</p>
-        </Link>
-
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mt-6 max-w-5xl mx-auto">
+        {[
+          { name: "Inventory", path: "/inventory", description: "Manage your products and stock." },
+          { name: "Earnings", path: "/earnings", description: "View your earnings and sales reports." },
+          { name: "Messages", path: "/messages", description: "Check messages from buyers." },
+          { name: "Reviews", path: "/reviews", description: "See feedback from customers." },
+          { name: "Auction", path: "/Auction", description: "Start Your Auction Here." },
+          { name: "Help and Support", path: "/Help", description: "If Any Queries Follow This." },
+          { name: "Chat Bot 24/7", path: "/bot", description: "Hey I am Here For You..." },
+        ].map((item, index) => (
+          <Link
+            key={index}
+            to={item.path}
+            className="flex flex-col justify-center items-center bg-white p-6 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1"
+          >
+            <h2 className="text-xl font-semibold text-gray-700">{item.name}</h2>
+            <p className="text-gray-600">{item.description}</p>
+          </Link>
+        ))}
       </div>
     </div>
   );
