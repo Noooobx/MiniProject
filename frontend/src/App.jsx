@@ -10,7 +10,7 @@ import Reviews from "./Components/Reviews";
 import Auction from "./Components/Auction";
 import Help from "./Components/Help";
 import Profile from "./Components/Profile";
-import Chatbot from "./Components/chatbot";
+import Chatbot from "./Components/Chatbot";
 import Buy from "./Components/Buy";
 
 function App() {
