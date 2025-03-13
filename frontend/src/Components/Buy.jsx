@@ -1,66 +1,65 @@
-import React, { useState } from "react";
-import Showcomp from "./Showcomp";
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import BuyComponent from "./BuyComponent";
 
-const products = [
-  { id: 1, name: "Spinach", category: "Leafy Vegetables", price: 20 },
-  { id: 2, name: "Lettuce", category: "Leafy Vegetables", price: 15 },
-  { id: 3, name: "Onion", category: "Root Vegetables", price: 25 },
-  { id: 4, name: "Carrot", category: "Root Vegetables", price: 30 },
-  { id: 5, name: "Apple", category: "Fruits", price: 50 },
-  { id: 6, name: "Orange", category: "Fruits", price: 40 },
-  { id: 7, name: "Eggs", category: "Eggs", price: 10 },
-  { id: 8, name: "Rice", category: "Rice and Grains", price: 60 },
-  { id: 9, name: "Wheat", category: "Rice and Grains", price: 55 },
-  { id: 10, name: "Chicken", category: "Chicken and Meat", price: 120 },
-  { id: 11, name: "Beef", category: "Chicken and Meat", price: 150 }
-];
+export default function Buy() {
+  const [sortOption, setSortOption] = useState("");
+  const [showBuyComponent, setShowBuyComponent] = useState(false);
 
-const Buy = ({ category, setCategory, selectedItem, setSelectedItem, categories, items, applyFilter }) => {
   return (
-    <div className="w-full bg-gray-800 p-5 mt-16 rounded-lg shadow-md">
-      <div className="flex flex-col md:flex-row gap-4">
-        <div className="flex flex-col w-full md:w-1/2">
-          <label className="text-white font-semibold mb-2">Select Category</label>
-          <select 
-            className="p-2 border border-gray-300 rounded-lg"
-            onChange={(e) => setCategory(e.target.value)} 
-            value={category}
-          >
-            <option value="">Select Category</option>
-            {categories.map((cat, index) => (
-              <option key={index} value={cat}>{cat}</option>
-            ))}
-          </select>
-        </div>
-        
-        <div className="flex flex-col w-full md:w-1/2">
-          <label className="text-white font-semibold mb-2">Select Item</label>
-          <select 
-            className="p-2 border border-gray-300 rounded-lg" 
-            onChange={(e) => setSelectedItem(e.target.value)} 
-            value={selectedItem} 
-            disabled={!category}
-          >
-            <option value="">Select Item</option>
-            {items.map((item) => (
-              <option key={item.id} value={item.name}>{item.name}</option>
-            ))}
-          </select>
-        </div>
-      </div>
-      <div className="mt-4 flex justify-center">
-        <button 
-          className="bg-blue-500 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-600"
-          onClick={applyFilter}
+    <div className="flex flex-col h-auto min-h-screen bg-gray-100">
+      {/* Top Navbar */}
+      <header className="bg-white shadow-md p-4 flex items-center justify-between">
+        <h1 className="text-xl font-bold text-gray-700">Dashboard</h1>
+      </header>
+
+      {/* Sort Bar (Amazon-style) */}
+      <div className="p-4 flex justify-end">
+        <select
+          className="p-2 border border-gray-300 rounded-md"
+          value={sortOption}
+          onChange={(e) => setSortOption(e.target.value)}
+        >
+          <option value="">Sort by</option>
+          <optgroup label="Category">
+            <option value="leafy">Leafy Vegetables</option>
+            <option value="rooty">Rooty Vegetables</option>
+            <option value="fruits">Fruits</option>
+            <option value="grains">Rice</option>
+          </optgroup>
+        </select>
+        <button
+          className="ml-4 p-2 bg-blue-500 text-white rounded-md"
+          onClick={() => setShowBuyComponent(true)}
         >
           Filter
         </button>
       </div>
-      <div>
-        <Showcomp/>
-      </div>
+
+      {/* Buy Component - Only Appears When Clicking Filter Button */}
+      {showBuyComponent && <BuyComponent category={sortOption} />}
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mt-6 max-w-5xl mx-auto">
+              {[
+                { name: "Cart", path: "/inventory", description: "Manage your products and stock." },
+                { name: "Earnings", path: "/earnings", description: "View your earnings and sales reports." },
+                { name: "Messages", path: "/messages", description: "Check messages from buyers." },
+                { name: "Reviews", path: "/reviews", description: "See feedback from customers." },
+                { name: "Auction", path: "/Auction", description: "Start Your Auction Here." },
+                { name: "Help and Support", path: "/Help", description: "If Any Queries Follow This." },
+                { name: "Chat Bot 24/7", path: "/bot", description: "Hey I am Here For You..." },
+              ].map((item, index) => (
+                <Link
+                  key={index}
+                  to={item.path}
+                  className="flex flex-col justify-center items-center bg-white p-6 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1"
+                >
+                  <h2 className="text-xl font-semibold text-gray-700">{item.name}</h2>
+                  <p className="text-gray-600">{item.description}</p>
+                </Link>
+              ))}
+            </div>
+
     </div>
   );
-};
-export default Buy;
-
+}
