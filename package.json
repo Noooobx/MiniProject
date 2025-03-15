@@ -14,10 +14,11 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "cookie-parser": "^1.4.7",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
-    "mongoose": "^8.9.4",
     "globals": "^15.9.0",
+    "mongoose": "^8.9.4",
     "tailwindcss": "^3.4.13",
     "vite": "^5.4.8"
   }

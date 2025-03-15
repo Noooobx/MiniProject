@@ -1,10 +1,11 @@
 import express from "express";
 import Listing from "../models/Listing.js";
 import mongoose from "mongoose";
+import userAuth from "../middlewares/auth.js";
 
 const listingRouter = express.Router();
 
-listingRouter.post("/add/item", async (req, res) => {
+listingRouter.post("/add/item", userAuth, async (req, res) => {
   try {
     const {
       name,
@@ -64,5 +65,42 @@ listingRouter.post("/add/item", async (req, res) => {
       .json({ message: "Add product failed", error: error.message });
   }
 });
+
+listingRouter.delete("/remove/:id", userAuth, async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Validate ID format
+    if (!Mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ success: false, message: "Invalid ID format" });
+    }
+
+    // Find and delete listing
+    const deletedItem = await Listing.findByIdAndDelete(id);
+
+    if (!deletedItem) {
+      console.warn(`Listing not found: ${id}`);
+      return res.status(404).json({ success: false, message: "Listing not found" });
+    }
+
+    console.log(`Listing deleted successfully: ${id}`);
+
+    res.status(200).json({
+      success: true,
+      message: "Listing removed successfully!",
+      deletedItem, // Return deleted item if needed
+    });
+
+  } catch (error) {
+    console.error("Error removing listing:", error);
+
+    res.status(500).json({
+      success: false,
+      message: "Failed to remove listing",
+      error: error.message,
+    });
+  }
+});
+
 
 export default listingRouter;
