@@ -12,6 +12,7 @@ import Help from "./Components/Help";
 import Profile from "./Components/Profile";
 import Chatbot from "./Components/Chatbot";
 import Buy from "./Components/Buy";
+import Footer from "./Components/Footer";
 
 function App() {
   return (
@@ -32,6 +33,7 @@ function App() {
         <Route path="/bot" element={<Chatbot />} />
         <Route path="/Buy" element={<Buy />} />
       </Routes>
+      <Footer />
     </BrowserRouter>
   );
 }
