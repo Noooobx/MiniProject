@@ -13,6 +13,7 @@ import Profile from "./Components/Profile";
 import Chatbot from "./Components/Chatbot";
 import Buy from "./Components/Buy";
 import Footer from "./Components/Footer";
+import News from "./Components/News";
 
 function App() {
   return (
@@ -32,6 +33,7 @@ function App() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/bot" element={<Chatbot />} />
         <Route path="/Buy" element={<Buy />} />
+        <Route path="/news" element={<News />} />
       </Routes>
       <Footer />
     </BrowserRouter>
