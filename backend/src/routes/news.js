@@ -18,7 +18,7 @@ newsRouter.get("/view", async (req, res) => {
 
     res.json(response.data); // Send the fetched news as JSON
   } catch (error) {
-    console.error("Error fetching news:", error.message);
+    console.error("Error fetching news:", error);
     res.status(500).json({ error: "Failed to fetch news" });
   }
 });
