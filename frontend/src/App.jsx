@@ -14,6 +14,9 @@ import Chatbot from "./Components/Chatbot";
 import Buy from "./Components/Buy";
 import Footer from "./Components/Footer";
 import News from "./Components/News";
+import OngoingAuctions from "./Components/OngoingAuctions";
+import AuctionForm from "./Components/Auction";
+import HelpSupport from "./Components/ HelpSupport";
 
 function App() {
   return (
@@ -28,12 +31,13 @@ function App() {
         <Route path="/earnings" element={<Earnings />} />
         <Route path="/messages" element={<Messages />} />
         <Route path="/reviews" element={<Reviews />} />
-        <Route path="/Auction" element={<Auction />} />
-        <Route path="/Help" element={<Help />} />
+        <Route path="/Auction" element={<OngoingAuctions />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/bot" element={<Chatbot />} />
         <Route path="/Buy" element={<Buy />} />
         <Route path="/news" element={<News />} />
+        <Route path="/newAuction" element={<AuctionForm />} />
+        <Route path="/help" element={<HelpSupport />} />
       </Routes>
       <Footer />
     </BrowserRouter>

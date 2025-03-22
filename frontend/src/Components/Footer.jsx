@@ -3,36 +3,56 @@ import { Facebook, Twitter, Instagram } from "lucide-react"; // Social icons
 
 export default function Footer() {
   return (
-    <footer className="bg-green-800 text-white py-8 px-6">
-      <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
-        {/* Left Section - Brand & Links */}
+    <footer className="bg-green-900 text-white py-10 px-6">
+      <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
+        {/* Left Section - Brand & Description */}
         <div className="text-center md:text-left">
-          <h2 className="text-2xl font-extrabold tracking-wide">Farm Direct</h2>
-          <p className="text-gray-200 text-sm mt-1">
-            Connecting farmers and buyers directly.
+          <h2 className="text-3xl font-extrabold tracking-wide text-green-300">Farm Direct</h2>
+          <p className="text-gray-300 text-sm mt-2 max-w-xs">
+            Bridging the gap between farmers and buyers with trust and transparency.
           </p>
         </div>
 
         {/* Middle Section - Navigation Links */}
-        <div className="flex flex-wrap justify-center md:justify-start gap-6 text-sm">
-          <Link to="/" className="hover:text-gray-300 transition">Home</Link>
-          <Link to="/news" className="hover:text-gray-300 transition">News</Link>
-          <Link to="/price" className="hover:text-gray-300 transition">Price</Link>
-          <Link to="/sell" className="hover:text-gray-300 transition">Sell</Link>
-          <Link to="/profile" className="hover:text-gray-300 transition">My Profile</Link>
-        </div>
+        <nav className="flex flex-wrap justify-center md:justify-start gap-6 text-sm">
+          {[
+            { name: "Home", path: "/" },
+            { name: "News", path: "/news" },
+            { name: "Price", path: "/price" },
+            { name: "Sell", path: "/sell" },
+            { name: "My Profile", path: "/profile" },
+          ].map((item, index) => (
+            <Link 
+              key={index} 
+              to={item.path} 
+              className="hover:text-green-300 transition-all duration-200"
+            >
+              {item.name}
+            </Link>
+          ))}
+        </nav>
 
         {/* Right Section - Social Media Links */}
-        <div className="flex gap-4">
-          <a href="#" className="hover:text-gray-300 transition"><Facebook size={24} /></a>
-          <a href="#" className="hover:text-gray-300 transition"><Twitter size={24} /></a>
-          <a href="#" className="hover:text-gray-300 transition"><Instagram size={24} /></a>
+        <div className="flex gap-5">
+          {[
+            { icon: <Facebook size={28} />, href: "#" },
+            { icon: <Twitter size={28} />, href: "#" },
+            { icon: <Instagram size={28} />, href: "#" },
+          ].map((social, index) => (
+            <a 
+              key={index} 
+              href={social.href} 
+              className="hover:text-green-300 transition-all duration-300 transform hover:scale-110"
+            >
+              {social.icon}
+            </a>
+          ))}
         </div>
       </div>
 
       {/* Bottom Section - Copyright */}
-      <div className="text-center text-gray-300 text-sm mt-6 border-t border-gray-600 pt-4">
-        &copy; {new Date().getFullYear()} Farm Direct. All rights reserved.
+      <div className="text-center text-gray-400 text-sm mt-8 border-t border-gray-700 pt-4">
+        &copy; {new Date().getFullYear()} <span className="text-green-300 font-semibold">Farm Direct</span>. All rights reserved.
       </div>
     </footer>
   );
