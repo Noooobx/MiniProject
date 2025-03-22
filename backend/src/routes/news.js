@@ -6,6 +6,7 @@ const newsRouter = express.Router();
 newsRouter.get("/view", async (req, res) => {
   try {
     const apiKey = process.env.NEWS_API_KEY || "978b530dc1c042268598aab3b901510e";
+    console.log(apiKey)
     const response = await axios.get(`https://newsapi.org/v2/everything`, {
       params: {
         q: "agriculture OR farming OR crops",
