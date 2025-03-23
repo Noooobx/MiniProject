@@ -101,7 +101,7 @@ authRouter.post("/login", async (req, res) => {
     res.cookie("token", token, {
       httpOnly: true, // Prevent client-side access (important for security)
       secure: process.env.NODE_ENV === "production", // Only send over HTTPS in production
-      sameSite: "strict", // Prevent CSRF attacks
+      sameSite: "None", // Prevent CSRF attacks
     });
 
     res.json({ message: "Login successful", token });
