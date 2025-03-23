@@ -8,7 +8,7 @@ const listingSchema = new mongoose.Schema(
     quantity: { type: String, required: true },
     productType:{type:String,required:true},
     image:{type:String,required:true},
-    video:{type:String,required:true},
+    video:{type:String,required:false},
     description: { type: String },
     category: { type: String, required: true },
     images: [{ type: String }] // Array of image URLs

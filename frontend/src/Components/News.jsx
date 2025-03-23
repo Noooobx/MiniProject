@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import BASE_URL from "../utils/constants";
 import LoadingSpinner from "./LoadingSpinner"; // Import spinner
 
 const News = () => {
@@ -11,6 +10,7 @@ const News = () => {
   useEffect(() => {
     const fetchNews = async () => {
       try {
+        const BASE_URL = import.meta.env.VITE_BASE_URL;
         const response = await axios.get(`${BASE_URL}/api/news/view`);
         setNews(response.data.articles);
       } catch (err) {

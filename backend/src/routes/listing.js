@@ -5,7 +5,7 @@ import userAuth from "../middlewares/auth.js";
 
 const listingRouter = express.Router();
 
-listingRouter.post("/add/item", userAuth, async (req, res) => {
+listingRouter.post("/add/item", async (req, res) => {
   try {
     const {
       name,
@@ -66,9 +66,11 @@ listingRouter.post("/add/item", userAuth, async (req, res) => {
   }
 });
 
-listingRouter.delete("/remove/:id", userAuth, async (req, res) => {
+listingRouter.delete("/remove/:id", async (req, res) => {
   try {
+    console.log("inside")
     const { id } = req.params;
+    console.log(id)
 
     // Validate ID format
     if (!Mongoose.Types.ObjectId.isValid(id)) {
@@ -99,6 +101,18 @@ listingRouter.delete("/remove/:id", userAuth, async (req, res) => {
       message: "Failed to remove listing",
       error: error.message,
     });
+  }
+});
+
+listingRouter.get("/listings", async (req, res) => {
+  try {
+    console.log("inside");
+    const listings = await Listing.find();
+    console.log(listings)
+    res.status(200).json({ success: true, data: listings });
+  } catch (error) {
+    console.error("Error fetching listings:", error);
+    res.status(500).json({ success: false, message: "Failed to fetch listings", error: error.message });
   }
 });
 
