@@ -10,13 +10,15 @@ import Reviews from "./Components/Reviews";
 import Auction from "./Components/Auction";
 import Help from "./Components/Help";
 import Profile from "./Components/Profile";
-import Chatbot from "./Components/Chatbot";
 import Buy from "./Components/Buy";
 import Footer from "./Components/Footer";
 import News from "./Components/News";
 import OngoingAuctions from "./Components/OngoingAuctions";
 import AuctionForm from "./Components/Auction";
-import HelpSupport from "./Components/ HelpSupport";
+import HelpSupport from "./Components/ HelpSupport"
+import ViewProduct from "./Components/ViewProduct";
+import Chatbot from "./Components/chatbot";   
+
 
 function App() {
   return (
@@ -33,12 +35,14 @@ function App() {
         <Route path="/reviews" element={<Reviews />} />
         <Route path="/Auction" element={<OngoingAuctions />} />
         <Route path="/profile" element={<Profile />} />
-        <Route path="/bot" element={<Chatbot />} />
         <Route path="/Buy" element={<Buy />} />
         <Route path="/news" element={<News />} />
         <Route path="/newAuction" element={<AuctionForm />} />
-        <Route path="/help" element={<HelpSupport />} />
+        <Route path="/support" element={<HelpSupport />} />
+        <Route path="/viewproduct" element={<ViewProduct />} />
+       
       </Routes>
+      <Chatbot />
       <Footer />
     </BrowserRouter>
   );
