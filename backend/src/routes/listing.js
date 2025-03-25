@@ -73,7 +73,7 @@ listingRouter.delete("/remove/:id", async (req, res) => {
     console.log(id)
 
     // Validate ID format
-    if (!Mongoose.Types.ObjectId.isValid(id)) {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({ success: false, message: "Invalid ID format" });
     }
 
@@ -106,9 +106,7 @@ listingRouter.delete("/remove/:id", async (req, res) => {
 
 listingRouter.get("/listings", async (req, res) => {
   try {
-    console.log("inside");
     const listings = await Listing.find();
-    console.log(listings)
     res.status(200).json({ success: true, data: listings });
   } catch (error) {
     console.error("Error fetching listings:", error);

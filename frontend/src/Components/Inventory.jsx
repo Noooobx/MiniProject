@@ -57,6 +57,7 @@ const Inventory = () => {
 
   const handleDeleteProduct = async (id) => {
     try {
+      console.log("inside")
       const response = await fetch(`${baseUrl}/api/product/remove/${id}`, { // Change 'listings' to 'product' if needed
         method: "DELETE",
         headers: {
