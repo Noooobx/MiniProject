@@ -3,6 +3,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
 import validateEmail from "../utils/validation.js";
+import userAuth from "../middlewares/auth.js";
 
 const authRouter = express.Router();
 
@@ -109,6 +110,10 @@ authRouter.post("/login", async (req, res) => {
     console.error("Login Error:", error);
     res.status(500).json({ message: "Server error", error: error.message });
   }
+});
+
+authRouter.get("/check", userAuth, (req, res) => {
+  res.json({ authenticated: true, user: req.user });
 });
 
 export default authRouter;

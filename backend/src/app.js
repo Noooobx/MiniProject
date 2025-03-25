@@ -9,6 +9,7 @@ import cookieParser from "cookie-parser";
 import newsRouter from "./routes/news.js";
 import benefitsRouter from "./routes/benefits.js";
 import cors from "cors";
+import router from "./routes/auction.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -28,6 +29,7 @@ app.use("/api/auth", authRouter);
 app.use("/api/product", listingRouter);
 app.use("/api/news",newsRouter);
 app.use("/api/benefits", benefitsRouter);
+app.use("/api/auctions", router);
 
 const PORT = process.env.PORT || 5000 ;
 

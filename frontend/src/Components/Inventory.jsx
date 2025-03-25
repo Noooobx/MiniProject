@@ -1,16 +1,18 @@
 import React, { useState, useEffect } from "react";
 import AddProduct from "./AddProduct";
 
+const baseUrl = import.meta.env.VITE_BASE_URL; // Use Vite env variable
+
 const Inventory = () => {
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
-    // Simulating fetching data from DB (empty initially)
     const fetchProducts = async () => {
       try {
-        const response = await fetch("/api/products"); // Change this to actual API endpoint
-        const data = await response.json();
-        setProducts(data || []); // Set empty array if no data
+        const response = await fetch(`${baseUrl}/api/product/listings`);
+        const { data } = await response.json();
+        if (!response.ok) throw new Error("Failed to fetch products");
+        setProducts(data || []);
       } catch (error) {
         console.error("Error fetching products:", error);
         setProducts([]); // Default to empty
@@ -20,87 +22,104 @@ const Inventory = () => {
     fetchProducts();
   }, []);
 
-  // Dummy data (only for UI preview)
-  useEffect(() => {
-    if (products.length === 0) {
-      setProducts([
-        {
-          id: 1,
-          name: "Carrots",
-          category: "Root Vegetables",
-          rate: 50,
-          quantity: { value: 2, unit: "kg" },
-          expiryTime: Date.now() + 5 * 24 * 60 * 60 * 1000, // 5 days
-          image: "https://via.placeholder.com/150",
-          video: null,
+  const handleAddProduct = async (newProduct) => {
+    try {
+      const formattedProduct = {
+        name: newProduct.name,
+        price: Number(newProduct.rate), // Convert string to number
+        quantity: Number(newProduct.quantity.value), // Extract value
+        productType: "Vegetable", // Add missing productType
+        category: newProduct.category,
+        description: newProduct.description || "No description provided",
+        image: newProduct.image || "https://example.com/default.jpg", // Default image
+        video: newProduct.video || "", // Ensure empty string instead of null
+      };
+
+      const response = await fetch(`${baseUrl}/api/product/add/item`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-        {
-          id: 2,
-          name: "Eggs",
-          category: "Eggs",
-          rate: 150,
-          quantity: { value: 1, unit: "dozen" },
-          expiryTime: Date.now() + 10 * 24 * 60 * 60 * 1000, // 10 days
-          image: "https://via.placeholder.com/150",
-          video: null,
-        },
-      ]);
+        body: JSON.stringify(formattedProduct),
+      });
+
+      const data = await response.json();
+      console.log(data);
+
+      if (!response.ok) throw new Error("Failed to add product");
+
+      setProducts([...products, data.data]);
+    } catch (error) {
+      console.error("Error adding product:", error);
     }
-  }, [products]);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setProducts((prevProducts) =>
-        prevProducts.filter((product) => !product.expiryTime || product.expiryTime > Date.now())
-      );
-    }, 10000);
-
-    return () => clearInterval(interval);
-  }, []);
-
-  const handleAddProduct = (newProduct) => {
-    setProducts([...products, newProduct]);
   };
 
+  const handleDeleteProduct = async (id) => {
+    try {
+      console.log("inside")
+      const response = await fetch(`${baseUrl}/api/product/remove/${id}`, { // Change 'listings' to 'product' if needed
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+
+      const data = await response.json()
+      console.log(data);
+  
+      if (!response.ok) throw new Error("Failed to delete product");
+  
+      setProducts(products.filter((product) => product._id !== id)); // Remove from UI
+    } catch (error) {
+      console.error("Error deleting product:", error);
+    }
+  };
+  
+
   return (
-    <div className="p-6 max-w-3xl mx-auto">
-      <h2 className="text-2xl font-bold mb-4">Manage Your Inventory</h2>
+    <div className="p-6 max-w-4xl pt-24 mx-auto">
+      <h2 className="text-2xl font-bold mb-4 text-center">
+        Manage Your Inventory
+      </h2>
 
       <h3 className="text-xl font-semibold mb-3">Your Products</h3>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {products.length > 0 ? (
           products.map((product) => (
-            <div key={product.id} className="bg-white p-4 shadow rounded-lg">
-              <h4 className="text-lg font-semibold">{product.name}</h4>
-              <p>Category: {product.category}</p>
-              <p>Rate: ₹{product.rate}</p>
-              <p>
-                Quantity: {product.quantity.value} {product.quantity.unit}
+            <div
+              key={product._id}
+              className="bg-white p-4 shadow-md rounded-lg flex flex-col items-center"
+            >
+              <img
+                src={
+                  "https://media.istockphoto.com/id/1203599923/photo/food-background-with-assortment-of-fresh-organic-vegetables.jpg?b=1&s=612x612&w=0&k=20&c=Xy80cP0SvyaaWPpZInnt3Ioib1Wff3xQSBBrooT2nB4="
+                }
+                alt="Product"
+                className="w-full h-40 object-cover rounded mb-3"
+              />
+              <h4 className="text-lg font-semibold text-center">
+                {product.name}
+              </h4>
+              <p className="text-sm text-gray-600">
+                Category: {product.category}
               </p>
-              {product.expiryTime ? (
-                <p className="text-red-500">
-                  Expires in:{" "}
-                  {Math.ceil((product.expiryTime - Date.now()) / (1000 * 60 * 60))} hours
-                </p>
-              ) : (
-                <p className="text-green-500">No Expiry</p>
-              )}
-              {product.image && (
-                <img
-                  src={product.image}
-                  alt="Product"
-                  className="w-full h-32 object-cover mt-2 rounded"
-                />
-              )}
-              {product.video && (
-                <video controls className="w-full mt-2 rounded">
-                  <source src={product.video} type="video/mp4" />
-                </video>
-              )}
+              <p className="text-sm text-gray-600">Price: ₹{product.price}</p>
+              <p className="text-sm text-gray-600">
+                Quantity: {product.quantity}
+              </p>
+              <button
+                onClick={() => handleDeleteProduct(product._id)}
+                className="mt-3 px-4 py-2 bg-red-500 text-white rounded w-full hover:bg-red-600"
+              >
+                Delete
+              </button>
             </div>
           ))
         ) : (
-          <p className="text-gray-500">No products available.</p>
+          <p className="text-gray-500 col-span-full text-center">
+            No products available.
+          </p>
         )}
       </div>
       <AddProduct onAdd={handleAddProduct} />
