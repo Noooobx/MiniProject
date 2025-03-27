@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
@@ -13,27 +12,27 @@ export default function Buy() {
       try {
         const cookies = document.cookie;
         const match = cookies.match(/token=([^;]*)/);
-  
+
         if (!match) {
           console.error("Token not found");
           return;
         }
-  
+
         const token = match[1];
         const payloadBase64 = token.split(".")[1];
         const payloadJson = atob(payloadBase64);
         const payload = JSON.parse(payloadJson);
-  
+
         if (!payload.userId) {
           console.error("User ID not found in token");
           return;
         }
-  
+
         console.log("Extracted Payload:", payload);
-  
+
         const res = await fetch(`${baseUrl}/api/product/listings?sellerId=${payload.userId}`);
         const data = await res.json();
-  
+
         if (data.success) {
           setListings(data.data);
         }
@@ -41,7 +40,7 @@ export default function Buy() {
         console.error("Error fetching listings:", error);
       }
     };
-  
+
     fetchListings();
   }, []);
 
@@ -50,19 +49,9 @@ export default function Buy() {
       listing.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
       (sortOption === "" || listing.category === sortOption)
   );
-=======
-import React from 'react'
-import ProductList from './ProductList'
->>>>>>> origin/main
 
-function Buy() {
   return (
-<<<<<<< HEAD
     <div className="flex flex-col min-h-screen bg-gray-100 pt-20">
-      {/* <header className="bg-white shadow-md p-6 flex items-center justify-between rounded-lg mx-4 my-4"> */}
-        {/* <h1 className="text-3xl font-bold text-gray-800">Marketplace</h1> */}
-      {/* </header> */}
-
       {/* Search & Filter Section */}
       <div className="p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between bg-white shadow-lg rounded-lg mx-4 mt-4 gap-4">
         {/* Search Bar */}
@@ -144,12 +133,6 @@ function Buy() {
           <p className="text-gray-500 text-center col-span-3 text-lg">No products found</p>
         )}
       </div>
-=======
-    <div>
-      <ProductList></ProductList>
->>>>>>> origin/main
     </div>
-  )
+  );
 }
-
-export default Buy

@@ -6,64 +6,38 @@ import Sell from "./Components/Sell";
 import Inventory from "./Components/Inventory";
 import Earnings from "./Components/Earnings";
 import Reviews from "./Components/Reviews";
-import Auction from "./Components/Auction";
-import Help from "./Components/Help";
+import OngoingAuctions from "./Components/OngoingAuctions";
+import AuctionForm from "./Components/Auction";
 import Profile from "./Components/Profile";
 import Buy from "./Components/Buy";
 import Footer from "./Components/Footer";
 import News from "./Components/News";
-import OngoingAuctions from "./Components/OngoingAuctions";
-import AuctionForm from "./Components/Auction";
-<<<<<<< HEAD
-import HelpSupport from "./Components/ HelpSupport";
-import ViewProduct from "./ViewProduct";
-import OtpTest from "./Components/OtpTest";
 import CloudinaryUploadTest from "./Components/CloudinaryUploadTest";
 import Requests from "./Components/Requests";
-=======
-import HelpSupport from "./Components/ HelpSupport"
-import ViewProduct from "./Components/ViewProduct";
-import Chatbot from "./Components/chatbot";   
-
->>>>>>> origin/main
+import Chatbot from "./Components/Chatbot";
+import ViewProduct from "./Components/Viewproduct";
 
 function App() {
   return (
     <BrowserRouter>
       <Navbar />
       <Chatbot />
-      {/* <!~~ <OtpTest/> ~~> */}
-      {/* <CloudinaryUploadTest /> */}
       <Routes>
-        
         <Route path="/" element={<Hero />} />
         <Route path="/login" element={<AuthForm />} />
         <Route path="/sell" element={<Sell />} />
         <Route path="/inventory" element={<Inventory />} />
         <Route path="/earnings" element={<Earnings />} />
         <Route path="/reviews" element={<Reviews />} />
-        <Route path="/Auction" element={<OngoingAuctions />} />
+        <Route path="/auction" element={<OngoingAuctions />} />
         <Route path="/profile" element={<Profile />} />
-        <Route path="/Buy" element={<Buy />} />
+        <Route path="/buy" element={<Buy />} />
         <Route path="/news" element={<News />} />
         <Route path="/newAuction" element={<AuctionForm />} />
-<<<<<<< HEAD
-        <Route path="/help" element={<HelpSupport />} />
         <Route path="/viewproduct/:productId" element={<ViewProduct />} />
         <Route path="/addProduct" element={<CloudinaryUploadTest />} />
-
-        <Route path="/requests" element={<Requests   />} />
-
-        
-
-        
-=======
-        <Route path="/support" element={<HelpSupport />} />
-        <Route path="/viewproduct" element={<ViewProduct />} />
-       
->>>>>>> origin/main
+        <Route path="/requests" element={<Requests />} />
       </Routes>
-      <Chatbot />
       <Footer />
     </BrowserRouter>
   );
