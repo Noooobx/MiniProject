@@ -40,12 +40,6 @@ export default function Dashboard() {
             icon: <Box size={32} />,
           },
           {
-            name: "Earnings",
-            path: "/earnings",
-            description: "View your earnings and sales reports.",
-            icon: <CreditCard size={32} />,
-          },
-          {
             name: "Messages",
             path: "/messages",
             description: "Check messages from buyers.",
@@ -64,12 +58,17 @@ export default function Dashboard() {
             icon: <Gavel size={32} />,
           },
           {
+            name: "Requests",
+            path: "/requests",
+            description: "Manage incoming requests.",
+            icon: <CreditCard size={32} />,
+          },
+          {
             name: "Help and Support",
             path: "/help",
             description: "If Any Queries Follow This.",
             icon: <LifeBuoy size={32} />,
           },
-          
         ].map((item, index) => (
           <Link
             key={index}

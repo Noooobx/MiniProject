@@ -14,6 +14,18 @@ router.post("/create", async (req, res) => {
   }
 });
 
+router.get("/:id/bids", async (req, res) => {
+  try {
+    const auction = await Auction.findById(req.params.id);
+    if (!auction) return res.status(404).json({ error: "Auction not found" });
+
+    res.status(200).json(auction.bids);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch bid history" });
+  }
+});
+
+
 // Get all active auctions (for polling)
 router.get("/active", async (req, res) => {
   try {

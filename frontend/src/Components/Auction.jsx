@@ -1,6 +1,8 @@
 import { useState } from "react";
 
 export default function AuctionForm() {
+  const baseUrl = import.meta.env.VITE_BASE_URL;
+
   const [auction, setAuction] = useState({
     title: "",
     description: "",
@@ -24,7 +26,7 @@ export default function AuctionForm() {
 
     try {
       const response = await fetch(
-        "http://localhost:8000/api/auctions/create",
+        baseUrl+"/api/auctions/create",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

@@ -1,9 +1,16 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Menu, X, Plus, User } from "lucide-react"; // Icons
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    alert("Logged out successfully");
+    setProfileOpen(false);
+  };
 
   return (
     <>
@@ -24,12 +31,37 @@ export default function Navbar() {
           >
             <Plus size={18} /> Sell
           </Link>
+
           {/* Profile Icon */}
-          <Link to="/profile" className="flex items-center gap-2 hover:text-green-700 transition">
-            <div className="w-9 h-9 bg-gray-200 rounded-full flex items-center justify-center">
+          <div className="relative">
+            <button
+              className="w-9 h-9 bg-gray-200 rounded-full flex items-center justify-center hover:ring-2 ring-green-500 transition"
+              onClick={() => setProfileOpen(!profileOpen)}
+            >
               <User size={22} className="text-gray-800" />
-            </div>
-          </Link>
+            </button>
+
+            {/* Profile Dropdown */}
+            {profileOpen && (
+              <div className="absolute right-0 mt-2 w-40 bg-white shadow-lg rounded-md py-2 z-50">
+                <button
+                  onClick={() => {
+                    setProfileOpen(false);
+                    navigate("/profile");
+                  }}
+                  className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+                >
+                  View Profile
+                </button>
+                <button
+                  onClick={handleLogout}
+                  className="block w-full text-left px-4 py-2 text-red-600 hover:bg-gray-100"
+                >
+                  Logout
+                </button>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Mobile Menu Button */}
@@ -41,6 +73,11 @@ export default function Navbar() {
         </button>
       </nav>
 
+      {/* Close dropdown on outside click */}
+      {profileOpen && (
+        <div className="fixed inset-0" onClick={() => setProfileOpen(false)}></div>
+      )}
+
       {/* Overlay Background */}
       {menuOpen && (
         <div
@@ -49,7 +86,7 @@ export default function Navbar() {
         ></div>
       )}
 
-      {/* Mobile Menu (Slide-in from Right) */}
+      {/* Mobile Menu */}
       <div
         className={`fixed top-0 right-0 h-full w-72 bg-white/80 backdrop-blur-md shadow-lg transform transition-transform duration-300 ease-in-out z-50 
           ${menuOpen ? "translate-x-0" : "translate-x-full"}
@@ -75,12 +112,15 @@ export default function Navbar() {
           >
             <Plus size={20} /> Sell
           </Link>
-          <Link to="/profile" className="flex items-center gap-2 hover:text-green-700 transition" onClick={() => setMenuOpen(false)}>
+          <button
+            className="flex items-center gap-2 hover:text-green-700 transition"
+            onClick={() => setProfileOpen(!profileOpen)}
+          >
             <div className="w-9 h-9 bg-gray-200 rounded-full flex items-center justify-center">
               <User size={22} className="text-gray-800" />
             </div>
             My Profile
-          </Link>
+          </button>
         </div>
       </div>
     </>
