@@ -9,17 +9,23 @@ import Reviews from "./Components/Reviews";
 import Auction from "./Components/Auction";
 import Help from "./Components/Help";
 import Profile from "./Components/Profile";
-import Chatbot from "./Components/Chatbot";
 import Buy from "./Components/Buy";
 import Footer from "./Components/Footer";
 import News from "./Components/News";
 import OngoingAuctions from "./Components/OngoingAuctions";
 import AuctionForm from "./Components/Auction";
+<<<<<<< HEAD
 import HelpSupport from "./Components/ HelpSupport";
 import ViewProduct from "./ViewProduct";
 import OtpTest from "./Components/OtpTest";
 import CloudinaryUploadTest from "./Components/CloudinaryUploadTest";
 import Requests from "./Components/Requests";
+=======
+import HelpSupport from "./Components/ HelpSupport"
+import ViewProduct from "./Components/ViewProduct";
+import Chatbot from "./Components/chatbot";   
+
+>>>>>>> origin/main
 
 function App() {
   return (
@@ -38,10 +44,10 @@ function App() {
         <Route path="/reviews" element={<Reviews />} />
         <Route path="/Auction" element={<OngoingAuctions />} />
         <Route path="/profile" element={<Profile />} />
-        <Route path="/bot" element={<Chatbot />} />
         <Route path="/Buy" element={<Buy />} />
         <Route path="/news" element={<News />} />
         <Route path="/newAuction" element={<AuctionForm />} />
+<<<<<<< HEAD
         <Route path="/help" element={<HelpSupport />} />
         <Route path="/viewproduct/:productId" element={<ViewProduct />} />
         <Route path="/addProduct" element={<CloudinaryUploadTest />} />
@@ -51,7 +57,13 @@ function App() {
         
 
         
+=======
+        <Route path="/support" element={<HelpSupport />} />
+        <Route path="/viewproduct" element={<ViewProduct />} />
+       
+>>>>>>> origin/main
       </Routes>
+      <Chatbot />
       <Footer />
     </BrowserRouter>
   );

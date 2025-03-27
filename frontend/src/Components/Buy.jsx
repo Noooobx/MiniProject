@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
@@ -49,8 +50,14 @@ export default function Buy() {
       listing.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
       (sortOption === "" || listing.category === sortOption)
   );
+=======
+import React from 'react'
+import ProductList from './ProductList'
+>>>>>>> origin/main
 
+function Buy() {
   return (
+<<<<<<< HEAD
     <div className="flex flex-col min-h-screen bg-gray-100 pt-20">
       {/* <header className="bg-white shadow-md p-6 flex items-center justify-between rounded-lg mx-4 my-4"> */}
         {/* <h1 className="text-3xl font-bold text-gray-800">Marketplace</h1> */}
@@ -137,6 +144,12 @@ export default function Buy() {
           <p className="text-gray-500 text-center col-span-3 text-lg">No products found</p>
         )}
       </div>
+=======
+    <div>
+      <ProductList></ProductList>
+>>>>>>> origin/main
     </div>
-  );
+  )
 }
+
+export default Buy
