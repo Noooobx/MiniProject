@@ -105,11 +105,11 @@ export default function Navbar() {
           <Link to="/news" className="hover:text-green-700 transition" onClick={() => setMenuOpen(false)}>News</Link>
           <Link to="/price" className="hover:text-green-700 transition" onClick={() => setMenuOpen(false)}>Price</Link>
           <Link
-            to="/sell"
+            to="/dashboard"
             className="flex items-center gap-2 px-6 py-2 bg-green-700 text-white font-semibold rounded-full shadow-md hover:bg-green-800 transition"
             onClick={() => setMenuOpen(false)}
           >
-            <Plus size={20} /> Sell
+            <Plus size={20} /> dashboard
           </Link>
           <button
             className="flex items-center gap-2 hover:text-green-700 transition"
