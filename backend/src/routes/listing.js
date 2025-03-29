@@ -190,6 +190,8 @@ listingRouter.get("/listings/:id", async (req, res) => {
 
 // For Buy.jsx ie.. all items except the currentUsers inventory Item.
 listingRouter.get("/listings",userAuth, async (req, res) => {
+
+  
   try {
     const { id } = req.currentUser; // Get sellerId from query params
 
