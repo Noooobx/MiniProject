@@ -88,9 +88,10 @@ listingRouter.post("/add/item",userAuth, async (req, res) => {
 });
 
 
-listingRouter.get("/listings/seller/:sellerId", async (req, res) => {
+listingRouter.get("/listings/seller",userAuth, async (req, res) => {
   try {
-    const { sellerId } = req.params;
+    const { id } = req.currentUser;
+    const sellerId = id.toString();
 
     if (!mongoose.Types.ObjectId.isValid(sellerId)) {
       return res
