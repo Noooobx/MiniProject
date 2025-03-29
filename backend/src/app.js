@@ -7,13 +7,13 @@ import authRouter from "./routes/auth.js";
 import listingRouter from "./routes/listing.js";
 import cookieParser from "cookie-parser";
 import newsRouter from "./routes/news.js";
-import benefitsRouter from "./routes/benefits.js";
 import router from "./routes/auction.js";
 import chatRouter from "./routes/chat.js";
 import emailRouter from "./routes/email.js";
 import cors from "cors";
 import otpRouter from "./routes/otpRoutes.js";
 import orderRouter from "./routes/orderRouter.js";
+import userRouter from "./routes/user.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -34,12 +34,13 @@ app.use(cookieParser());
 app.use("/api/auth", authRouter);
 app.use("/api/product", listingRouter);
 app.use("/api/news", newsRouter);
-app.use("/api/benefits", benefitsRouter);
 app.use("/api/auctions", router);
 app.use("/api/chat", chatRouter);
 app.use("/api/email", emailRouter);
 app.use("/api", otpRouter);
 app.use("/api/orders", orderRouter);
+app.use("/api/user", userRouter);
+
 
 const PORT = process.env.PORT || 5000;
 

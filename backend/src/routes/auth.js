@@ -9,7 +9,7 @@ import dotenv from "dotenv";
 dotenv.config(); // Load environment variables
 
 const authRouter = express.Router();
-const JWT_SECRET = process.env.JWT_SECRET || "default_secret"; // Use env variable, fallback for safety
+const JWT_SECRET = process.env.JWT_SECRET || "default_secret"; 
 
 // POST /api/auth/signup
 authRouter.post("/signup", async (req, res) => {
@@ -40,7 +40,7 @@ authRouter.post("/signup", async (req, res) => {
     const token = jwt.sign({ userId: newUser._id, role: newUser.role }, JWT_SECRET, { expiresIn: "7d" });
 
     res.cookie("token", token, {
-      httpOnly: true, // Security improvement
+      httpOnly: false, 
       secure: process.env.NODE_ENV === "production",
       sameSite: "Lax",
     });
@@ -73,7 +73,7 @@ authRouter.post("/login", async (req, res) => {
     const token = jwt.sign({ userId: user._id, role: user.role }, JWT_SECRET, { expiresIn: "7d" });
 
     res.cookie("token", token, {
-      httpOnly: true, // Security improvement
+      httpOnly: false, // Security improvement
       secure: process.env.NODE_ENV === "production",
       sameSite: "Lax",
     });
@@ -84,6 +84,15 @@ authRouter.post("/login", async (req, res) => {
     res.status(500).json({ message: "Server error", error: error.message });
   }
 });
+
+authRouter.get("/api/test-cookie",userAuth, (req, res) => {
+  if (req.cookies.token) {
+    res.json({ message: "Token cookie is present", token: req.cookies.token });
+  } else {
+    res.json({ message: "No token cookie found" });
+  }
+});
+
 
 // GET /api/auth/check
 authRouter.get("/check", userAuth, (req, res) => {

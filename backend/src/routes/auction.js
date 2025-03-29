@@ -14,17 +14,22 @@ router.post("/create", async (req, res) => {
   }
 });
 
-router.get("/:id/bids", async (req, res) => {
+router.get("/seller/:sellerId/auctions", async (req, res) => {
   try {
-    const auction = await Auction.findById(req.params.id);
-    if (!auction) return res.status(404).json({ error: "Auction not found" });
+    const auctions = await Auction.find({ sellerId: req.params.sellerId });
 
-    res.status(200).json(auction.bids);
+    // if (!auctions || auctions.length === 0) {
+    //   return res
+    //     .status(404)
+    //     .json({ error: "No auctions found for this seller" });
+    // }
+
+    res.status(200).json(auctions);
   } catch (error) {
-    res.status(500).json({ error: "Failed to fetch bid history" });
+    console.error(error);
+    res.status(500).json({ error: "Failed to fetch seller auctions" });
   }
 });
-
 
 // Get all active auctions (for polling)
 router.get("/active", async (req, res) => {
@@ -38,17 +43,20 @@ router.get("/active", async (req, res) => {
   }
 });
 
-router.get("/ongoing", async (req, res) => {
-  console.log("hello i am inside /ongoing");
+router.get("/ongoing/:id", async (req, res) => {
   try {
-    // ✅ FIX: Change "ongoing" to "active"
-    const auctions = await Auction.find({ status: "active" }).sort({
+    const userId = req.params.id;
+
+    const auctions = await Auction.find({
+      status: "active",
+      sellerId: { $ne: userId }, // Not equal condition
+    }).sort({
       startTime: 1,
     });
-    console.log("Auctions found:", auctions);
+
     res.status(200).json(auctions);
   } catch (error) {
-    console.log("Error fetching ongoing auctions:", error);
+    console.error("Error fetching ongoing auctions:", error);
     res.status(500).json({ error: "Failed to fetch ongoing auctions" });
   }
 });

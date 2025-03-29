@@ -27,6 +27,11 @@ const auctionSchema = new mongoose.Schema(
       enum: ["active", "completed", "canceled"],
       default: "active",
     },
+    sellerId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    }, // Added field
   },
   { timestamps: true }
 );

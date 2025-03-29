@@ -17,7 +17,9 @@ const storage = new CloudinaryStorage({
 });
 const upload = multer({ storage });
 
-listingRouter.post("/upload", upload.single("image"), async (req, res) => {
+
+// Upload image to cloudinary.
+listingRouter.post("/upload",userAuth, upload.single("image"), async (req, res) => {
   try {
     res.json({ imageUrl: req.file.path }); // Cloudinary returns the image URL
   } catch (error) {
@@ -25,7 +27,8 @@ listingRouter.post("/upload", upload.single("image"), async (req, res) => {
   }
 });
 
-listingRouter.post("/add/item", async (req, res) => {
+// Add item to inventory
+listingRouter.post("/add/item",userAuth, async (req, res) => {
   try {
     const {
       name,
@@ -48,7 +51,6 @@ listingRouter.post("/add/item", async (req, res) => {
 
     // Extract the user ID from the authentication middleware
     const sellerId = req.body.userId; // This should come from the decoded JWT token
-    console.log(sellerId)
 
     if (!sellerId) {
       return res.status(401).json({
@@ -84,10 +86,10 @@ listingRouter.post("/add/item", async (req, res) => {
   }
 });
 
+
 listingRouter.get("/listings/seller/:sellerId", async (req, res) => {
   try {
     const { sellerId } = req.params;
-    console.log(sellerId)
 
     if (!mongoose.Types.ObjectId.isValid(sellerId)) {
       return res
@@ -114,32 +116,30 @@ listingRouter.get("/listings/seller/:sellerId", async (req, res) => {
   }
 });
 
-
-
-listingRouter.delete("/remove/:id", async (req, res) => {
+// Delete item fromt the inventory 
+listingRouter.delete("/remove",userAuth, async (req, res) => {
   try {
-    console.log("inside");
-    const { id } = req.params;
-    console.log(id);
+    
+    const { id } = req.currentUser;
+    const userId = id.toString();
 
     // Validate ID format
-    if (!mongoose.Types.ObjectId.isValid(id)) {
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
       return res
         .status(400)
         .json({ success: false, message: "Invalid ID format" });
     }
 
     // Find and delete listing
-    const deletedItem = await Listing.findByIdAndDelete(id);
+    const deletedItem = await Listing.findOneAndDelete({ sellerId: userId });
 
     if (!deletedItem) {
-      console.warn(`Listing not found: ${id}`);
+      console.warn(`Listing not found: ${userId}`);
       return res
         .status(404)
         .json({ success: false, message: "Listing not found" });
     }
 
-    console.log(`Listing deleted successfully: ${id}`);
 
     res.status(200).json({
       success: true,
@@ -186,18 +186,16 @@ listingRouter.get("/listings/:id", async (req, res) => {
   }
 });
 
-listingRouter.get("/listings", async (req, res) => {
+// For Buy.jsx ie.. all items except the currentUsers inventory Item.
+listingRouter.get("/listings",userAuth, async (req, res) => {
   try {
-    const { sellerId } = req.query; // Get sellerId from query params
-    console.log(sellerId)
+    const { id } = req.currentUser; // Get sellerId from query params
 
-    if (!sellerId) {
+    if (!id) {
       return res.status(400).json({ success: false, message: "sellerId is required" });
     }
 
-    console.log("inside");
-    const listings = await Listing.find({ sellerId: { $ne: sellerId } });
-    console.log(listings);
+    const listings = await Listing.find({ sellerId: { $ne: id } });
 
     res.status(200).json({ success: true, data: listings });
   } catch (error) {
