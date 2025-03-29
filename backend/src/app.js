@@ -24,10 +24,14 @@ const app = express();
 
 app.use(
   cors({
-    origin: ["http://localhost:5173", "mini-project-psi-navy.vercel.app"],
+    origin: [
+      "http://localhost:5173",
+      "https://mini-project-psi-navy.vercel.app",
+    ],
     credentials: true,
   })
 );
+
 app.use(express.json());
 app.use(cookieParser());
 
