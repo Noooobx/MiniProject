@@ -50,7 +50,8 @@ listingRouter.post("/add/item",userAuth, async (req, res) => {
     }
 
     // Extract the user ID from the authentication middleware
-    const sellerId = req.body.userId; // This should come from the decoded JWT token
+    const id = req.currentUser.id;
+    const sellerId = id; // This should come from the decoded JWT token
 
     if (!sellerId) {
       return res.status(401).json({
