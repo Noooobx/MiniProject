@@ -53,7 +53,7 @@ export default function Dashboard() {
           },
           {
             name: "Auction",
-            path: "/auction",
+            path: "/myAuction",
             description: "Start Your Auction Here.",
             icon: <Gavel size={32} />,
           },
@@ -67,6 +67,12 @@ export default function Dashboard() {
             name: "Help and Support",
             path: "/help",
             description: "If Any Queries Follow This.",
+            icon: <LifeBuoy size={32} />,
+          },
+          {
+            name: "Orders",
+            path: "/view-orders",
+            description: "Checkout the orders.",
             icon: <LifeBuoy size={32} />,
           },
         ].map((item, index) => (

@@ -16,6 +16,10 @@ import CloudinaryUploadTest from "./Components/CloudinaryUploadTest";
 import Requests from "./Components/Requests";
 import Chatbot from "./Components/Chatbot";
 import ViewProduct from "./Components/Viewproduct";
+import MyAuctions from "./Components/MyAuctions";
+import ConfirmBuy from "./Components/ConfirmBuy";
+import Benefit from "./Components/Benefits";
+import Orders from "./Components/Orders";
 
 function App() {
   return (
@@ -25,18 +29,24 @@ function App() {
       <Routes>
         <Route path="/" element={<Hero />} />
         <Route path="/login" element={<AuthForm />} />
-        <Route path="/sell" element={<Sell />} />
+        <Route path="/dashboard" element={<Sell />} />
         <Route path="/inventory" element={<Inventory />} />
         <Route path="/earnings" element={<Earnings />} />
         <Route path="/reviews" element={<Reviews />} />
+        <Route path="/myAuction" element={<MyAuctions />} />
         <Route path="/auction" element={<OngoingAuctions />} />
+        <Route path="/view-orders" element={<Orders />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/buy" element={<Buy />} />
         <Route path="/news" element={<News />} />
         <Route path="/newAuction" element={<AuctionForm />} />
-        <Route path="/viewproduct/:productId" element={<ViewProduct />} />
+        <Route path="/viewproduct/:id" element={<ViewProduct />} />
         <Route path="/addProduct" element={<CloudinaryUploadTest />} />
         <Route path="/requests" element={<Requests />} />
+        <Route path="/confirm-buy" element={<ConfirmBuy />} />
+        <Route path="/benefits" element={<Benefit />} />
+
+        
       </Routes>
       <Footer />
     </BrowserRouter>

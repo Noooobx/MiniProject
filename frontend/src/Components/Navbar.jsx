@@ -26,10 +26,9 @@ export default function Navbar() {
           <Link to="/news" className="hover:text-green-700 transition font-medium">News</Link>
           <Link to="/price" className="hover:text-green-700 transition font-medium">Price</Link>
           <Link
-            to="/sell"
+            to="/dashboard"
             className="flex items-center gap-2 px-6 py-2 bg-green-700 text-white font-semibold rounded-full shadow-md hover:bg-green-800 transition"
-          >
-            <Plus size={18} /> Sell
+          > Dashboard
           </Link>
 
           {/* Profile Icon */}
