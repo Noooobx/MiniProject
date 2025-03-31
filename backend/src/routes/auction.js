@@ -15,9 +15,9 @@ router.post("/create", async (req, res) => {
   }
 });
 
-router.get("/seller/:sellerId/auctions", async (req, res) => {
+router.get("/seller/list",userAuth, async (req, res) => {
   try {
-    const auctions = await Auction.find({ sellerId: req.params.sellerId });
+    const auctions = await Auction.find({ sellerId: req.currentUser.id });
 
     // if (!auctions || auctions.length === 0) {
     //   return res
@@ -44,9 +44,9 @@ router.get("/active", async (req, res) => {
   }
 });
 
-router.get("/ongoing/:id", async (req, res) => {
+router.get("/ongoing",userAuth, async (req, res) => {
   try {
-    const userId = req.params.id;
+    const userId = req.currentUser.id;
 
     const auctions = await Auction.find({
       status: "active",
