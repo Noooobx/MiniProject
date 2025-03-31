@@ -1,35 +1,49 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import {
+  Package,
+  Truck,
+  XCircle,
+  User,
+  Store,
+  Calendar,
+  MapPin,
+} from "lucide-react";
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
   const [error, setError] = useState("");
   const navigate = useNavigate();
   const baseUrl = import.meta.env.VITE_BASE_URL;
+
   // Fetch orders from the backend
-  useEffect(() => {
-    const fetchOrders = async () => {
-      try {
-        const response = await fetch(baseUrl + "/api/orders", {
-            credentials: "include",
-          });
-          
-        if (!response.ok) {
-          throw new Error("Failed to fetch orders.");
-        }
-        const data = await response.json();
+  const fetchOrders = async () => {
+    try {
+      const response = await fetch(baseUrl + "/api/orders", {
+        credentials: "include",
+      });
 
-        if (data.success) {
-          setOrders(data.orders);
-        } else {
-          setError(data.message || "Failed to fetch orders.");
-        }
-      } catch (err) {
-        console.error("Error fetching orders:", err);
-        setError(err.message || "Failed to fetch orders.");
+      if (!response.ok) {
+        throw new Error("Failed to fetch orders.");
       }
-    };
+      const data = await response.json();
+      console.log(data);
 
+      if (data.success) {
+        const pendingOrders = data.orders.filter(
+          (order) => order.status === "pending"
+        );
+        setOrders(pendingOrders);
+      } else {
+        setError(data.message || "Failed to fetch orders.");
+      }
+    } catch (err) {
+      console.error("Error fetching orders:", err);
+      setError(err.message || "Failed to fetch orders.");
+    }
+  };
+
+  useEffect(() => {
     fetchOrders();
   }, []);
 
@@ -41,17 +55,17 @@ const Orders = () => {
   // Function to update the status of an order to "Picked Up"
   const handleOrderPickedUp = async (orderId) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/orders/${orderId}/pickup`, {
+      console.log(orderId);
+      const response = await fetch(`${baseUrl}/api/orders/${orderId}/pickup`, {
         method: "PATCH",
+        credentials: "include",
       });
+
       const data = await response.json();
+      console.log(data);
       if (data.success) {
-        // Update the order status locally
-        setOrders((prevOrders) =>
-          prevOrders.map((order) =>
-            order._id === orderId ? { ...order, status: "Picked Up" } : order
-          )
-        );
+        alert("Order successfully marked as picked up!");
+        await fetchOrders();
       } else {
         setError(data.message || "Failed to mark order as picked up.");
       }
@@ -64,12 +78,14 @@ const Orders = () => {
   // Function to cancel an order
   const handleCancelOrder = async (orderId) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/orders/${orderId}/cancel`, {
-        method: "PATCH",
-      });
+      const response = await fetch(
+        `http://localhost:5000/api/orders/${orderId}/cancel`,
+        {
+          method: "PATCH",
+        }
+      );
       const data = await response.json();
       if (data.success) {
-        // Update the order status locally
         setOrders((prevOrders) =>
           prevOrders.filter((order) => order._id !== orderId)
         );
@@ -83,85 +99,119 @@ const Orders = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-8">
-      <div className="bg-white rounded-xl shadow-lg p-6 w-full max-w-4xl border border-gray-200">
-        <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">🛒 Your Orders</h2>
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4 sm:p-6">
+      <div className="w-full max-w-5xl bg-white rounded-3xl shadow-lg p-6 sm:p-8">
+        <h2 className="text-2xl sm:text-3xl font-semibold text-gray-800 flex items-center justify-center gap-3 mb-6 sm:mb-8">
+          <Package size={32} className="sm:w-9 sm:h-9" /> Your Orders
+        </h2>
 
         {error && (
-          <div className="mb-6 text-red-600 text-center">
-            <p>{error}</p>
+          <div className="mb-6 text-red-500 text-center text-sm sm:text-base">
+            {error}
           </div>
         )}
 
-        {/* Orders list */}
         <div className="space-y-6">
           {orders.length > 0 ? (
             orders.map((order) => (
               <div
                 key={order._id}
-                className="border border-gray-300 p-6 rounded-xl hover:shadow-xl transition-all cursor-pointer bg-white"
+                className="border border-gray-200 rounded-xl p-4 sm:p-6 hover:shadow-xl transition-shadow duration-200 cursor-pointer"
                 onClick={() => handleViewOrder(order._id)}
               >
-                {/* Product Details */}
-                <div className="flex gap-6 mb-4">
+                {/* Product Info */}
+                <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
                   <img
                     src={order.productId?.image}
                     alt={order.productId?.name}
-                    className="w-40 h-40 object-cover rounded-lg"
+                    className="w-24 h-24 sm:w-32 sm:h-32 object-cover rounded-lg"
                   />
-                  <div className="flex flex-col justify-between">
-                    <h3 className="text-2xl font-semibold text-gray-800">{order.productId?.name}</h3>
-                    <p className="text-sm text-gray-500">Category: {order.productId?.category}</p>
-                    <p className="text-sm text-gray-500">Price: ₹{order.productId?.price}</p>
-                    <p className="text-sm text-gray-500">Quantity: {order.quantity}</p>
-                    <p className="text-sm text-gray-500">Product Type: {order.productId?.productType}</p>
+                  <div className="flex-1">
+                    <h3 className="text-lg sm:text-xl font-medium text-gray-800">
+                      {order.productId?.name}
+                    </h3>
+                    <p className="text-sm sm:text-base text-gray-600">
+                      ₹{order.productId?.price} • Qty: {order.quantity}
+                    </p>
+                    <p className="text-xs sm:text-sm text-gray-400">
+                      {order.productId?.category} • {order.productId?.productType}
+                    </p>
                   </div>
                 </div>
 
-                {/* Seller Details */}
-                <div className="mt-4">
-                  <h4 className="text-xl font-semibold text-gray-700">Seller Info</h4>
-                  <p className="text-sm text-gray-500">Name: {order.sellerId?.name}</p>
-                  <p className="text-sm text-gray-500">Email: {order.sellerId?.email}</p>
-                  <p className="text-sm text-gray-500">Phone: {order.sellerId?.phone}</p>
-                  <p className="text-sm text-gray-500">Location: {order.sellerId?.location}</p>
-                </div>
-
-                {/* Buyer Details */}
-                <div className="mt-4">
-                  <h4 className="text-xl font-semibold text-gray-700">Buyer Info</h4>
-                  <p className="text-sm text-gray-500">Name: {order.buyer?.name}</p>
-                  <p className="text-sm text-gray-500">Email: {order.buyer?.email}</p>
+                {/* Seller & Buyer Info */}
+                <div className="mt-4 sm:mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 text-sm sm:text-base text-gray-600">
+                  <div>
+                    <h4 className="font-semibold flex items-center gap-2">
+                      <Store size={18} className="sm:w-5 sm:h-5" /> Seller
+                    </h4>
+                    <p>{order.sellerId?.name}</p>
+                    <p className="text-xs sm:text-sm text-gray-400">
+                      {order.sellerId?.email}
+                    </p>
+                    <p className="text-xs sm:text-sm text-gray-400">
+                      {order.sellerId?.phone}
+                    </p>
+                    <p className="text-xs sm:text-sm text-gray-400">
+                      {order.sellerId?.location}
+                    </p>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold flex items-center gap-2">
+                      <User size={18} className="sm:w-5 sm:h-5" /> Buyer
+                    </h4>
+                    <p>{order.buyer?.name}</p>
+                    <p className="text-xs sm:text-sm text-gray-400">
+                      {order.buyer?.email}
+                    </p>
+                  </div>
                 </div>
 
                 {/* Order Details */}
-                <div className="mt-4">
-                  <h4 className="text-xl font-semibold text-gray-700">Order Details</h4>
-                  <p className="text-sm text-gray-500">Pickup Location: {order.pickupLocation}</p>
-                  <p className="text-sm text-gray-500">Pickup Date: {new Date(order.pickupDate).toLocaleDateString()}</p>
-                  <p className="text-sm text-gray-500">Order Status: {order.status}</p>
-                  <p className="text-sm text-gray-500">Order Date: {new Date(order.createdAt).toLocaleDateString()}</p>
+                <div className="mt-4 sm:mt-6 text-sm sm:text-base text-gray-600">
+                  <p className="flex items-center gap-2">
+                    <MapPin size={18} className="sm:w-5 sm:h-5" />{" "}
+                    {order.pickupLocation}
+                  </p>
+                  <p className="flex items-center gap-2">
+                    <Calendar size={18} className="sm:w-5 sm:h-5" />{" "}
+                    {new Date(order.pickupDate).toLocaleDateString()}
+                  </p>
+                  <p className="text-xs sm:text-sm text-gray-400">
+                    Ordered: {new Date(order.createdAt).toLocaleDateString()}
+                  </p>
+                  <p className="text-xs sm:text-sm text-gray-400">
+                    Status: {order.status}
+                  </p>
                 </div>
 
                 {/* Action Buttons */}
-                <div className="flex gap-4 mt-6">
+                <div className="flex flex-col sm:flex-row justify-center gap-4 mt-4 sm:mt-6">
                   <button
-                    onClick={() => handleOrderPickedUp(order._id)}
-                    className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleOrderPickedUp(order._id);
+                    }}
+                    className="flex items-center justify-center gap-2 px-4 py-2 bg-green-500 text-white text-sm sm:text-base rounded-lg hover:bg-green-600 transition-colors w-full sm:w-auto"
                   >
-                    Mark as Picked Up
+                    <Truck size={18} className="sm:w-5 sm:h-5" />Marked as picked Up
                   </button>
                   <button
-                    onClick={() => handleCancelOrder(order._id)}
-                    className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleCancelOrder(order._id);
+                    }}
+                    className="flex items-center justify-center gap-2 px-4 py-2 bg-red-500 text-white text-sm sm:text-base rounded-lg hover:bg-red-600 transition-colors w-full sm:w-auto"
                   >
-                    Cancel Order
+                    <XCircle size={18} className="sm:w-5 sm:h-5" /> Cancel
                   </button>
                 </div>
               </div>
             ))
           ) : (
-            <p className="text-center text-gray-500">No orders found.</p>
+            <p className="text-center text-gray-500 text-sm sm:text-base">
+              No pending orders.
+            </p>
           )}
         </div>
       </div>

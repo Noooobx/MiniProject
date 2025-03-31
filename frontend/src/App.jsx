@@ -20,6 +20,7 @@ import MyAuctions from "./Components/MyAuctions";
 import ConfirmBuy from "./Components/ConfirmBuy";
 import Benefit from "./Components/Benefits";
 import Orders from "./Components/Orders";
+import FinishedOrders from "./Components/FinishedOrders";
 
 function App() {
   return (
@@ -45,7 +46,7 @@ function App() {
         <Route path="/requests" element={<Requests />} />
         <Route path="/confirm-buy" element={<ConfirmBuy />} />
         <Route path="/benefits" element={<Benefit />} />
-
+        <Route path="/view-history" element={<FinishedOrders />} />
         
       </Routes>
       <Footer />

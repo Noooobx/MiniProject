@@ -1,5 +1,6 @@
 import express from "express";
 import Auction from "../models/Auction.js";
+import userAuth from "../middlewares/auth.js";
 
 const router = express.Router();
 
@@ -73,9 +74,10 @@ router.get("/:id", async (req, res) => {
 });
 
 // Place a bid
-router.post("/:id/bid", async (req, res) => {
+router.post("/:id/bid", userAuth, async (req, res) => {
   try {
-    const { amount, bidderId } = req.body;
+    const { id: bidderId } = req.currentUser; // ✅ Extract bidderId correctly
+    const { amount } = req.body; // ✅ Get only amount from body
     const auction = await Auction.findById(req.params.id);
 
     if (!auction) return res.status(404).json({ error: "Auction not found" });
@@ -94,6 +96,7 @@ router.post("/:id/bid", async (req, res) => {
 
     res.status(200).json({ message: "Bid placed successfully", auction });
   } catch (error) {
+    console.error("Bid Error:", error);
     res.status(500).json({ error: "Failed to place bid" });
   }
 });

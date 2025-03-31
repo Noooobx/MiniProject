@@ -1,5 +1,17 @@
 import { Link } from "react-router-dom";
-import { Package, DollarSign, Users, Box, CreditCard, MessageSquare, Star, Gavel, LifeBuoy } from "lucide-react";
+import {
+  Package,
+  DollarSign,
+  CalendarCheck,
+  Users,
+  Box,
+  CreditCard,
+  MessageSquare,
+  Star,
+  Gavel,
+  LifeBuoy,
+  Handshake,
+} from "lucide-react";
 
 export default function Dashboard() {
   return (
@@ -13,8 +25,16 @@ export default function Dashboard() {
       <main className="p-6 flex justify-center">
         <div className="bg-white w-full max-w-5xl grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 p-6 rounded-lg shadow-md border border-green-300">
           {[
-            { title: "Total Orders", value: "120", icon: <Package size={24} /> },
-            { title: "Total Sales", value: "$5,320", icon: <DollarSign size={24} /> },
+            {
+              title: "Total Orders",
+              value: "120",
+              icon: <Package size={24} />,
+            },
+            {
+              title: "Total Sales",
+              value: "$5,320",
+              icon: <DollarSign size={24} />,
+            },
             { title: "Active Users", value: "250", icon: <Users size={24} /> },
           ].map((card, index) => (
             <div
@@ -39,40 +59,48 @@ export default function Dashboard() {
             description: "Manage your products and stock.",
             icon: <Box size={32} />,
           },
-          {
-            name: "Messages",
-            path: "/messages",
-            description: "Check messages from buyers.",
-            icon: <MessageSquare size={32} />,
-          },
-          {
-            name: "Reviews",
-            path: "/reviews",
-            description: "See feedback from customers.",
-            icon: <Star size={32} />,
-          },
+          // {
+          //   name: "Messages",
+          //   path: "/messages",
+          //   description: "Check messages from buyers.",
+          //   icon: <MessageSquare size={32} />,
+          // },
+          // {
+          //   name: "Reviews",
+          //   path: "/reviews",
+          //   description: "See feedback from customers.",
+          //   icon: <Star size={32} />,
+          // },
           {
             name: "Auction",
             path: "/myAuction",
             description: "Start Your Auction Here.",
             icon: <Gavel size={32} />,
           },
+          // {
+          //   name: "Requests",
+          //   path: "/requests",
+          //   description: "Manage incoming requests.",
+          //   icon: <CreditCard size={32} />,
+          // },
+
           {
-            name: "Requests",
-            path: "/requests",
-            description: "Manage incoming requests.",
-            icon: <CreditCard size={32} />,
+            name: "Scheduled Pickups",
+            path: "/view-orders",
+            description: "Check out the scheduled pickups.",
+            icon: <CalendarCheck size={32} />,
+          },
+
+          {
+            name: "Deal History",
+            path: "/view-history",
+            description: "Check out your past deals.",
+            icon: <Handshake size={32} />,
           },
           {
             name: "Help and Support",
             path: "/help",
             description: "If Any Queries Follow This.",
-            icon: <LifeBuoy size={32} />,
-          },
-          {
-            name: "Orders",
-            path: "/view-orders",
-            description: "Checkout the orders.",
             icon: <LifeBuoy size={32} />,
           },
         ].map((item, index) => (
@@ -82,7 +110,9 @@ export default function Dashboard() {
             className="flex flex-col justify-center items-center bg-white p-6 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1"
           >
             <div className="text-green-700">{item.icon}</div>
-            <h2 className="text-xl font-semibold text-gray-700 mt-2">{item.name}</h2>
+            <h2 className="text-xl font-semibold text-gray-700 mt-2">
+              {item.name}
+            </h2>
             <p className="text-gray-600">{item.description}</p>
           </Link>
         ))}

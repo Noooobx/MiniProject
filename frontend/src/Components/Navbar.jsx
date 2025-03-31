@@ -22,7 +22,7 @@ export default function Navbar() {
 
         {/* Desktop Menu */}
         <div className="hidden md:flex gap-8 items-center">
-          <Link to="/" className="hover:text-green-700 transition font-medium">Home</Link>
+          <Link to="/buy" className="hover:text-green-700 transition font-medium">Home</Link>
           <Link to="/news" className="hover:text-green-700 transition font-medium">News</Link>
           <Link to="/price" className="hover:text-green-700 transition font-medium">Price</Link>
           <Link

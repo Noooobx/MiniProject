@@ -8,6 +8,7 @@ export default function OngoingAuctions() {
   const [auctions, setAuctions] = useState([]);
   const [error, setError] = useState(null);
   const [bidAmount, setBidAmount] = useState({});
+  const [timeLeft, setTimeLeft] = useState({});
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -28,22 +29,63 @@ export default function OngoingAuctions() {
           `${baseUrl}/api/auctions/ongoing/${sellerId}`
         );
         setAuctions(res.data);
+
+        // Initialize countdowns
+        const initialTimes = {};
+        res.data.forEach((auction) => {
+          initialTimes[auction._id] = calculateTimeLeft(auction.endTime);
+        });
+        setTimeLeft(initialTimes);
       } catch (err) {
         setError(err.response?.data?.message || err.message);
       }
     };
+
     fetchBids();
-  }, []);
+
+    // Update countdown every second
+    const interval = setInterval(() => {
+      setTimeLeft((prev) => {
+        const newTimes = {};
+        auctions.forEach((auction) => {
+          newTimes[auction._id] = calculateTimeLeft(auction.endTime);
+        });
+        return newTimes;
+      });
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [auctions]);
+
+  const calculateTimeLeft = (endTime) => {
+    const now = new Date().getTime();
+    const end = new Date(endTime).getTime();
+    const difference = end - now;
+
+    if (difference <= 0) return "Auction Ended";
+
+    const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+    const hours = Math.floor(
+      (difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+    );
+    const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+
+    return `${days}d ${hours}h ${minutes}m ${seconds}s`;
+  };
 
   const handleBid = async (auctionId) => {
     try {
       const amount = Number(bidAmount[auctionId]);
       if (!amount || amount <= 0) return alert("Enter a valid bid amount");
 
-      await axios.post(`${baseUrl}/api/auctions/${auctionId}/bid`, {
-        amount,
-        bidderId: "67e3ffb1462c1abf09e03255", // For now static
-      });
+      const result = await axios.post(
+        `${baseUrl}/api/auctions/${auctionId}/bid`,
+        { amount }, // For now static
+        { withCredentials: true } // Ensures cookies (e.g., authentication token) are included
+      );
+
+      console.log(result);
 
       alert("Bid placed successfully!");
 
@@ -62,7 +104,9 @@ export default function OngoingAuctions() {
 
   if (error) {
     return (
-      <div className="text-red-500 text-center mt-5 text-lg">Error: {error}</div>
+      <div className="text-red-500 text-center mt-5 text-lg">
+        Error: {error}
+      </div>
     );
   }
 
@@ -93,25 +137,29 @@ export default function OngoingAuctions() {
                   <div className="space-y-2 text-sm sm:text-base mb-4">
                     <p className="text-gray-700 flex items-center gap-2">
                       <IndianRupee className="w-4 h-4 text-green-600" />
-                      <span className="font-medium">Starting Price:</span>{" "}
-                      ₹{auction.startingPrice}
+                      <span className="font-medium">Starting Price:</span> ₹
+                      {auction.startingPrice}
                     </p>
                     <p className="text-gray-700 flex items-center gap-2">
                       <ArrowUpRight className="w-4 h-4 text-blue-600" />
-                      <span className="font-medium">Min Bid Increment:</span>{" "}
-                      ₹{auction.minBidIncrement}
+                      <span className="font-medium">Min Bid Increment:</span> ₹
+                      {auction.minBidIncrement}
                     </p>
                     <p className="text-gray-700 flex items-center gap-2">
                       <IndianRupee className="w-4 h-4 text-gray-800" />
-                      <span className="font-medium">Highest Bid:</span>{" "}
-                      ₹{auction.highestBid.amount}
+                      <span className="font-medium">Highest Bid:</span> ₹
+                      {auction.highestBid.amount}
                     </p>
-                    <p className="text-gray-500 flex items-center gap-2">
+                    <p
+                      className={`flex items-center gap-2 text-sm sm:text-base ${
+                        timeLeft[auction._id]?.includes("Auction Ended")
+                          ? "text-red-600 font-semibold"
+                          : "text-green-600 font-medium"
+                      }`}
+                    >
                       <Clock className="w-4 h-4 text-gray-500" />
-                      Ends on:{" "}
-                      <span className="font-medium">
-                        {new Date(auction.endTime).toLocaleString()}
-                      </span>
+                      Ends in:{" "}
+                      <span>{timeLeft[auction._id] || "Calculating..."}</span>
                     </p>
                   </div>
 
