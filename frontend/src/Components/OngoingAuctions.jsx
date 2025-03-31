@@ -14,23 +14,13 @@ export default function OngoingAuctions() {
   useEffect(() => {
     const fetchBids = async () => {
       try {
-        const cookies = document.cookie;
-        const match = cookies.match(/token=([^;]*)/);
-        const token = match ? match[1] : null;
-        if (!token) {
-          setError("User not authenticated");
-          return;
-        }
-        const payloadBase64 = token.split(".")[1];
-        const payloadJson = atob(payloadBase64);
-        const payload = JSON.parse(payloadJson);
-        const sellerId = payload.userId;
-        const res = await axios.get(
-          `${baseUrl}/api/auctions/ongoing/${sellerId}`
-        );
+        const res = await axios.get(`${baseUrl}/api/auctions/ongoing`, {
+          withCredentials: true,
+        });
+  
         setAuctions(res.data);
-
-        // Initialize countdowns
+  
+        // Initialize countdowns immediately after auctions are fetched
         const initialTimes = {};
         res.data.forEach((auction) => {
           initialTimes[auction._id] = calculateTimeLeft(auction.endTime);
@@ -40,22 +30,25 @@ export default function OngoingAuctions() {
         setError(err.response?.data?.message || err.message);
       }
     };
-
+  
     fetchBids();
-
-    // Update countdown every second
+  }, []); // Runs only once when the component mounts
+  
+  // Update countdowns every second
+  useEffect(() => {
     const interval = setInterval(() => {
       setTimeLeft((prev) => {
-        const newTimes = {};
+        const newTimes = { ...prev };
         auctions.forEach((auction) => {
           newTimes[auction._id] = calculateTimeLeft(auction.endTime);
         });
         return newTimes;
       });
     }, 1000);
-
-    return () => clearInterval(interval);
-  }, [auctions]);
+  
+    return () => clearInterval(interval); // Cleanup on component unmount
+  }, [auctions]); // Runs when auctions change
+  
 
   const calculateTimeLeft = (endTime) => {
     const now = new Date().getTime();

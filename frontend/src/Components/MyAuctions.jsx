@@ -13,24 +13,11 @@ export default function MyAuctions() {
   useEffect(() => {
     const fetchAuctions = async () => {
       try {
-        const cookies = document.cookie;
-        const match = cookies.match(/token=([^;]*)/);
-        const token = match ? match[1] : null;
 
-        if (!token) {
-          setError("User not authenticated");
-          setLoading(false);
-          return;
-        }
-
-        const payloadBase64 = token.split(".")[1];
-        const payloadJson = atob(payloadBase64);
-        const payload = JSON.parse(payloadJson);
-        const sellerId = payload.userId;
-
-        const res = await axios.get(
-          `${baseUrl}/api/auctions/seller/${sellerId}/auctions`
-        );
+        const res = await axios.get(`${baseUrl}/api/auctions/seller/list`, {
+          withCredentials: true
+        });
+        
 
         setAuctions(res.data);
       } catch (err) {
