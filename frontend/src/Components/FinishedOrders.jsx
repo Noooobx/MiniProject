@@ -33,10 +33,10 @@ const FinishedOrders = () => {
   }, []);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-8">
+    <div className="min-h-screen flex items-center py-28 justify-center bg-gray-50 p-8">
       <div className="bg-white rounded-xl shadow-lg p-6 w-full max-w-4xl border border-gray-200">
         <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">
-          ✅ Finished Orders
+          Deal History
         </h2>
 
         {error && <p className="text-center text-red-600">{error}</p>}
@@ -48,24 +48,19 @@ const FinishedOrders = () => {
                 key={order._id}
                 className="border border-gray-300 p-6 rounded-xl bg-white hover:shadow-xl transition-all"
               >
-                <div className="flex gap-6 mb-4">
-                  <img
-                    src={order.productId?.image}
-                    alt={order.productId?.name}
-                    className="w-40 h-40 object-cover rounded-lg"
-                  />
-                  <div className="flex flex-col justify-between">
+                <div className="flex gap-6 mb-4 flex-wrap">
+                  <div className="flex flex-col justify-between w-full">
                     <h3 className="text-2xl font-semibold text-gray-800">
                       {order.productId?.name}
                     </h3>
                     <p className="text-sm text-gray-500">
-                      Category: {order.productId?.category}
+                      <strong>Category:</strong> {order.productId?.category}
                     </p>
                     <p className="text-sm text-gray-500">
-                      Price: ₹{order.productId?.price}
+                      <strong>Price:</strong> ₹{order.productId?.price}
                     </p>
                     <p className="text-sm text-gray-500">
-                      Quantity: {order.quantity}
+                      <strong>Quantity:</strong> {order.quantity}
                     </p>
                   </div>
                 </div>
@@ -75,17 +70,17 @@ const FinishedOrders = () => {
                     Order Details
                   </h4>
                   <p className="text-sm text-gray-500">
-                    Pickup Location: {order.pickupLocation}
+                    <strong>Pickup Location:</strong> {order.pickupLocation}
                   </p>
                   <p className="text-sm text-gray-500">
-                    Pickup Date:{" "}
+                    <strong>Pickup Date:</strong>{" "}
                     {new Date(order.pickupDate).toLocaleDateString()}
                   </p>
                   <p className="text-sm text-gray-500">
-                    Order Status: {order.status}
+                    <strong>Order Status:</strong> {order.status}
                   </p>
                   <p className="text-sm text-gray-500">
-                    Order Date: {new Date(order.createdAt).toLocaleDateString()}
+                    <strong>Order Date:</strong> {new Date(order.createdAt).toLocaleDateString()}
                   </p>
                 </div>
               </div>

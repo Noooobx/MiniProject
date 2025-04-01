@@ -103,6 +103,12 @@ export default function Dashboard() {
             description: "If Any Queries Follow This.",
             icon: <LifeBuoy size={32} />,
           },
+          {
+            name: "Completed Auctions",
+            path: "/won-auctions",
+            description: "Ended Auctions",
+            icon: <LifeBuoy size={32} />,
+          },
         ].map((item, index) => (
           <Link
             key={index}

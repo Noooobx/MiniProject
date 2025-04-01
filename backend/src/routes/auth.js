@@ -9,7 +9,7 @@ import dotenv from "dotenv";
 dotenv.config(); // Load environment variables
 
 const authRouter = express.Router();
-const JWT_SECRET = process.env.JWT_SECRET || "default_secret"; 
+const JWT_SECRET = process.env.JWT_SECRET || "default_secret";
 
 // POST /api/auth/signup
 authRouter.post("/signup", async (req, res) => {
@@ -18,18 +18,22 @@ authRouter.post("/signup", async (req, res) => {
     email = email.toLowerCase();
 
     if (!validateEmail(email)) {
-      return res.status(400).json({ success: false, message: "Invalid email format." });
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid email format." });
     }
 
     if (!name || !email || !phone || !password || !location) {
       return res.status(400).json({
         success: false,
-        message: "Missing required fields. Please provide name, email, phone, password, and location.",
+        message:
+          "Missing required fields. Please provide name, email, phone, password, and location.",
       });
     }
 
     const existingUser = await User.findOne({ email });
-    if (existingUser) return res.status(400).json({ message: "User already exists" });
+    if (existingUser)
+      return res.status(400).json({ message: "User already exists" });
 
     const salt = await bcrypt.genSalt(10);
     const passwordHash = await bcrypt.hash(password, salt);
@@ -37,10 +41,14 @@ authRouter.post("/signup", async (req, res) => {
     const newUser = new User({ name, email, phone, passwordHash, location });
     await newUser.save();
 
-    const token = jwt.sign({ userId: newUser._id, role: newUser.role }, JWT_SECRET, { expiresIn: "7d" });
+    const token = jwt.sign(
+      { userId: newUser._id, role: newUser.role },
+      JWT_SECRET,
+      { expiresIn: "7d" }
+    );
 
     res.cookie("token", token, {
-      httpOnly: false, 
+      httpOnly: false,
       secure: process.env.NODE_ENV === "production",
       sameSite: "None",
     });
@@ -59,18 +67,25 @@ authRouter.post("/login", async (req, res) => {
     email = email.toLowerCase();
 
     if (!validateEmail(email)) {
-      return res.status(400).json({ success: false, message: "Invalid email format." });
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid email format." });
     }
 
     const user = await User.findOne({ email });
-    if (!user) return res.status(400).json({ message: "Invalid email or password" });
+    if (!user)
+      return res.status(400).json({ message: "Invalid email or password" });
 
     if (!bcrypt.compareSync(password, user.passwordHash)) {
       res.clearCookie("token");
-      return res.status(401).json({ success: false, message: "Invalid credentials." });
+      return res
+        .status(401)
+        .json({ success: false, message: "Invalid credentials." });
     }
 
-    const token = jwt.sign({ userId: user._id, role: user.role }, JWT_SECRET, { expiresIn: "7d" });
+    const token = jwt.sign({ userId: user._id, role: user.role }, JWT_SECRET, {
+      expiresIn: "7d",
+    });
 
     res.cookie("token", token, {
       httpOnly: false, // Security improvement
@@ -85,7 +100,17 @@ authRouter.post("/login", async (req, res) => {
   }
 });
 
-authRouter.get("/api/test-cookie",userAuth, (req, res) => {
+authRouter.post("/logout", (req, res) => {
+  res.clearCookie("token", {
+    httpOnly: false,
+    secure: process.env.NODE_ENV === "production", 
+    sameSite: "lax",
+  });
+
+  res.status(200).json({ message: "Logout successful" });
+});
+
+authRouter.get("/api/test-cookie", userAuth, (req, res) => {
   if (req.cookies.token) {
     res.json({ message: "Token cookie is present", token: req.cookies.token });
   } else {
@@ -93,6 +118,47 @@ authRouter.get("/api/test-cookie",userAuth, (req, res) => {
   }
 });
 
+// POST /api/auth/reset-password/:email
+authRouter.post("/reset-password/:email", async (req, res) => {
+  try {
+    const { email } = req.params;
+    const { password } = req.body;
+
+    // Validate email format
+    if (!validateEmail(email)) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid email format." });
+    }
+
+    // Validate newPassword presence
+    if (!password) {
+      return res
+        .status(400)
+        .json({ success: false, message: "New password is required." });
+    }
+
+    // Find user by email
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ message: "User not found." });
+    }
+
+    // Hash the new password
+    const salt = await bcrypt.genSalt(10);
+    const passwordHash = await bcrypt.hash(password, salt);
+    console.log(passwordHash);
+
+    // Update the passwordHash in the database
+    user.passwordHash = passwordHash;
+    await user.save();
+
+    res.status(200).json({ message: "Password reset successful." });
+  } catch (error) {
+    console.error("Password Reset Error:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+});
 
 // GET /api/auth/check
 authRouter.get("/check", userAuth, (req, res) => {

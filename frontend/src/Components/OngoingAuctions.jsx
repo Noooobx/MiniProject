@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { Clock, ImageOff, IndianRupee, ArrowUpRight } from "lucide-react";
+import LoadingSpinner from "./LoadingSpinner"; // Assuming you have the LoadingSpinner component imported
 
 export default function OngoingAuctions() {
   const baseUrl = import.meta.env.VITE_BASE_URL;
@@ -9,6 +10,7 @@ export default function OngoingAuctions() {
   const [error, setError] = useState(null);
   const [bidAmount, setBidAmount] = useState({});
   const [timeLeft, setTimeLeft] = useState({});
+  const [loading, setLoading] = useState(true); // State to handle loading
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -26,8 +28,10 @@ export default function OngoingAuctions() {
           initialTimes[auction._id] = calculateTimeLeft(auction.endTime);
         });
         setTimeLeft(initialTimes);
+        setLoading(false); // Data has been fetched, stop loading
       } catch (err) {
         setError(err.response?.data?.message || err.message);
+        setLoading(false); // If there's an error, stop loading
       }
     };
   
@@ -48,7 +52,6 @@ export default function OngoingAuctions() {
   
     return () => clearInterval(interval); // Cleanup on component unmount
   }, [auctions]); // Runs when auctions change
-  
 
   const calculateTimeLeft = (endTime) => {
     const now = new Date().getTime();
@@ -94,6 +97,10 @@ export default function OngoingAuctions() {
       alert(err.response?.data?.error || "Failed to place bid");
     }
   };
+
+  if (loading) {
+    return <LoadingSpinner />; // Show the loading spinner while data is loading
+  }
 
   if (error) {
     return (

@@ -14,6 +14,8 @@ import cors from "cors";
 import otpRouter from "./routes/otpRoutes.js";
 import orderRouter from "./routes/orderRouter.js";
 import userRouter from "./routes/user.js";
+import auctionOrderRouter from "./routes/auctionOrderRouter.js";
+import './utils/cron.js'; 
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -44,6 +46,8 @@ app.use("/api/email", emailRouter);
 app.use("/api", otpRouter);
 app.use("/api/orders", orderRouter);
 app.use("/api/user", userRouter);
+app.use("/api/success",auctionOrderRouter);
+
 
 
 const PORT = process.env.PORT || 5000;

@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { checkAuth } from "../utils/authUtils";
 
 export default function AuthForm() {
   const baseUrl = import.meta.env.VITE_BASE_URL;
@@ -12,6 +13,16 @@ export default function AuthForm() {
     password: "",
     location: "",
   });
+
+  useEffect(() => {
+    const checkUserAuth = async () => {
+      const isAuthenticated = await checkAuth();
+      if (isAuthenticated) {
+        navigate("/buy");
+      }
+    };
+    checkUserAuth();
+  }, [navigate]);
 
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -26,7 +37,7 @@ export default function AuthForm() {
   const sendOTP = async () => {
     setError(null);
     try {
-      const response = await fetch(baseUrl+"/api/send-otp", {
+      const response = await fetch(`${baseUrl}/api/send-otp`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: formData.email }),
@@ -42,7 +53,7 @@ export default function AuthForm() {
   const verifyOTP = async () => {
     setError(null);
     try {
-      const response = await fetch(baseUrl+"/api/verify-otp", {
+      const response = await fetch(`${baseUrl}/api/verify-otp`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: formData.email, otp }),
@@ -79,6 +90,7 @@ export default function AuthForm() {
       if (!response.ok) throw new Error(data.message || "Something went wrong");
 
       localStorage.setItem("token", data.token);
+      window.location.reload();
       navigate("/buy");
     } catch (error) {
       setError(error.message);
@@ -125,9 +137,9 @@ export default function AuthForm() {
               className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-50"
               placeholder="Enter your email"
               required
-              disabled={otpSent}
+              disabled={!isLogin && otpSent}
             />
-            {!otpSent && (
+            {!isLogin && !otpSent && (
               <button
                 type="button"
                 onClick={sendOTP}
@@ -138,8 +150,8 @@ export default function AuthForm() {
             )}
           </div>
 
-          {/* OTP Verification */}
-          {otpSent && !otpVerified && (
+          {/* OTP Verification (Only for Signup) */}
+          {!isLogin && otpSent && !otpVerified && (
             <div className="space-y-2">
               <input
                 type="text"
@@ -191,17 +203,29 @@ export default function AuthForm() {
             className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-50"
             placeholder="Enter your password"
             required
-            disabled={!otpVerified}
           />
 
-          {/* Submit Button - Disabled until OTP is verified */}
+          {/* Submit Button */}
           <button
             type="submit"
             className="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition font-medium"
-            disabled={!otpVerified || loading}
+            disabled={!isLogin && (!otpVerified || loading)}
           >
             {loading ? "Processing..." : isLogin ? "Login" : "Sign Up"}
           </button>
+
+          {/* Forgot Password Link (Only in Login) */}
+          {isLogin && (
+            <div className="text-center">
+              <button
+                type="button"
+                onClick={() => navigate("/reset-password")}
+                className="text-blue-600 flex text-sm font-medium cursor-pointer hover:underline"
+              >
+                Forgot Password?
+              </button>
+            </div>
+          )}
         </form>
 
         <p className="text-center text-gray-600 mt-6 text-sm">

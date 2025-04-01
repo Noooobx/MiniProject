@@ -21,6 +21,9 @@ import ConfirmBuy from "./Components/ConfirmBuy";
 import Benefit from "./Components/Benefits";
 import Orders from "./Components/Orders";
 import FinishedOrders from "./Components/FinishedOrders";
+import WonAuctions from "./Components/WonAuctions";
+import PickupForm from "./Components/PickupForm";
+import ResetPassword from "./Components/ResetPassword";
 
 function App() {
   return (
@@ -47,6 +50,10 @@ function App() {
         <Route path="/confirm-buy" element={<ConfirmBuy />} />
         <Route path="/benefits" element={<Benefit />} />
         <Route path="/view-history" element={<FinishedOrders />} />
+        <Route path="/won-auctions" element={<WonAuctions />} />
+        <Route path="/auction-pickup/:id" element={<PickupForm />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
+        
         
       </Routes>
       <Footer />

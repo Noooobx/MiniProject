@@ -24,12 +24,6 @@ export default function AuctionForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const cookies = document.cookie;
-      const match = cookies.match(/token=([^;]*)/);
-      const token = match[1];
-      const payloadBase64 = token.split(".")[1];
-      const payloadJson = atob(payloadBase64);
-      const payload = JSON.parse(payloadJson);
 
       const response = await fetch(baseUrl + "/api/auctions/create", {
         method: "POST",
@@ -43,9 +37,10 @@ export default function AuctionForm() {
           endTime: new Date(auction.endTime),
           images: [],
           status: "active",
-          sellerId: payload.userId,
         }),
+        credentials: "include",  // This ensures cookies are sent with the request
       });
+      
 
       const result = await response.json();
       if (response.ok) {

@@ -1,38 +1,54 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+import LoadingSpinner from "./LoadingSpinner";
+import { checkAuth } from "../utils/authUtils"; // Ensure correct import path
 
 export default function Buy() {
   const [listings, setListings] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [sortOption, setSortOption] = useState("");
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchListings = async () => {
+    const verifyAuthAndFetch = async () => {
+      const isAuthenticated = await checkAuth();
+      if (!isAuthenticated) {
+        alert("Please log in to continue.");
+        return navigate("/login");
+      }
+
+      // Fetch listings only if authenticated
       const baseUrl = import.meta.env.VITE_BASE_URL;
       try {
-
-        const res = await fetch(
-          `${baseUrl}/api/product/listings`,
-          {
-            credentials: "include",
-          }
-        );
-
+        const res = await fetch(`${baseUrl}/api/product/listings`, {
+          credentials: "include",
+        });
         const data = await res.json();
-        if (data.success) setListings(data.data);
+        if (data.success) {
+          setListings(data.data);
+        }
       } catch (error) {
         console.error("Error fetching listings:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
-    fetchListings();
-  }, []);
+    verifyAuthAndFetch();
+  }, [navigate]);
 
   const filteredListings = listings.filter(
     (listing) =>
       listing.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
-      (sortOption === "" || listing.category === sortOption)
+      (sortOption === "" ||
+        listing.category.toLowerCase() === sortOption.toLowerCase())
   );
+
+  if (loading) {
+    return <LoadingSpinner />;
+  }
 
   return (
     <div className="flex flex-col min-h-screen bg-green-50 py-20">
@@ -81,23 +97,29 @@ export default function Buy() {
               <span className="absolute top-2 left-2 bg-green-500 text-white text-xs px-2 py-1 rounded">
                 {listing.category}
               </span>
-              <div className="p-4 flex flex-col gap-2">
-                <h2 className="text-lg font-semibold text-gray-800 truncate">
+              <div className="p-6 flex flex-col gap-4">
+                <h2 className="text-xl font-semibold text-gray-800 truncate">
                   {listing.name}
                 </h2>
-                <p className="text-green-700 font-bold">₹{listing.price}/kg</p>
+                <div className="flex justify-between items-center">
+                  <p className="text-lg text-green-700 font-bold">
+                    Price : ₹{listing.price}/kg
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    Qty: {listing.quantity} kg
+                  </p>
+                </div>
                 <p className="text-xs text-gray-500">
-                  Qty: {listing.quantity} kg
-                </p>
-                <p className="text-xs text-gray-500">
-                  Posted:{" "}
+                  <strong>Posted on:</strong>{" "}
                   {new Date(listing.createdAt).toLocaleDateString("en-IN")}
                 </p>
+                <p className="text-sm text-gray-700">{listing.description}</p>
+
                 <Link
                   to={`/viewproduct/${listing.sellerId}`}
                   state={{ product: listing }}
                 >
-                  <button className="mt-2 w-full bg-blue-600 text-white text-sm py-2 rounded-md hover:bg-blue-700 transition">
+                  <button className="mt-4 w-full bg-blue-600 text-white text-sm py-2 rounded-md hover:bg-blue-700 transition">
                     View Product
                   </button>
                 </Link>

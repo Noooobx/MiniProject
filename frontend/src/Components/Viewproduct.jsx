@@ -22,6 +22,8 @@ const ViewProduct = () => {
     navigate("/confirm-buy", { state: { product } });
   };
 
+  console.log(product)
+
   return (
     <div className="min-h-screen bg-gray-100 py-40 py-16 px-4 flex flex-col lg:flex-row items-center lg:items-center justify-center gap-10 lg:gap-20">
       {/* Left Section - Process Flow & Farmer Details */}

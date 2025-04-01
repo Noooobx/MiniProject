@@ -5,8 +5,12 @@ import userAuth from "../middlewares/auth.js";
 const router = express.Router();
 
 // Create an auction
-router.post("/create", async (req, res) => {
+router.post("/create",userAuth, async (req, res) => {
   try {
+    const inputData =  req.body;
+    //console.log(inputData);
+    inputData["sellerId"] = req.currentUser.id;
+    console.log(inputData)
     const auction = new Auction(req.body);
     await auction.save();
     res.status(201).json({ message: "Auction created successfully", auction });
