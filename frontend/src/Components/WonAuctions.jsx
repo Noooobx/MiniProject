@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios"; // Ensure axios is installed for API requests
+import axios from "axios";
 import { Link } from "react-router-dom";
 
 const WonAuctions = () => {
@@ -10,11 +10,11 @@ const WonAuctions = () => {
   // Fetch auction orders from the backend API
   useEffect(() => {
     axios
-      .get("http://localhost:5000/api/success/auction-orders") // Replace with your API URL if needed
+      .get("http://localhost:5000/api/success/auction-orders")
       .then((response) => {
         console.log(response);
-        setAuctionOrders(response.data.auctionOrders); // Set the auction orders from response
-        setLoading(false); // Stop loading when data is fetched
+        setAuctionOrders(response.data.auctionOrders || []); // Ensure it's an array
+        setLoading(false);
       })
       .catch((err) => {
         setError("Error fetching auction orders");
@@ -39,7 +39,7 @@ const WonAuctions = () => {
   }
 
   return (
-    <div className="container mx-auto p-4 h-screen flex flex-col items-center justify-center">
+    <div className="container mx-auto p-4 pt-28 min-h-screen flex flex-col items-center justify-center">
       <h1 className="text-3xl font-semibold text-center text-gray-800 mb-6">
         Completed Auctions
       </h1>
@@ -55,31 +55,35 @@ const WonAuctions = () => {
               className="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300"
             >
               <h3 className="text-xl font-bold text-gray-800">
-                {order.auctionId.title}
+                {order.auctionId?.title || "No title available"}
               </h3>
               <p className="text-gray-600 mb-2">
-                <strong>Description:</strong> {order.auctionId.description}
+                <strong>Description:</strong> {order.auctionId?.description || "No description"}
               </p>
               <p className="text-gray-600 mb-2">
-                <strong>Buyer:</strong> {order.buyerId.name} (
-                {order.buyerId.email})
+                <strong>Buyer:</strong> {order.buyerId?.name || "Unknown"} (
+                {order.buyerId?.email || "No email"})
               </p>
               <p className="text-gray-600 mb-2">
-                <strong>Seller:</strong> {order.sellerId.name} (
-                {order.sellerId.email})
+                <strong>Seller:</strong> {order.sellerId?.name || "Unknown"} (
+                {order.sellerId?.email || "No email"})
               </p>
               <p className="text-gray-600 mb-2">
                 <strong>Start Time:</strong>{" "}
-                {new Date(order.auctionId.startTime).toLocaleString()}
+                {order.auctionId?.startTime
+                  ? new Date(order.auctionId.startTime).toLocaleString()
+                  : "N/A"}
               </p>
               <p className="text-gray-600 mb-2">
                 <strong>End Time:</strong>{" "}
-                {new Date(order.auctionId.endTime).toLocaleString()}
+                {order.auctionId?.endTime
+                  ? new Date(order.auctionId.endTime).toLocaleString()
+                  : "N/A"}
               </p>
               <p className="text-lg font-semibold text-gray-700">
-                <strong>Amount:</strong> ₹{order.amount}
+                <strong>Amount:</strong> ₹{order.amount || "N/A"}
               </p>
-              
+
               {order.pickupLocation && order.contactInfo ? (
                 <div className="mt-4">
                   <p className="text-gray-700">
@@ -98,11 +102,13 @@ const WonAuctions = () => {
                   </div>
                 </div>
               ) : (
-                <Link to={`/auction-pickup/${order.auctionId._id}`}>
-                  <button className="mt-4 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 focus:outline-none">
-                    Confirm Pickup Location
-                  </button>
-                </Link>
+                order.auctionId?._id && (
+                  <Link to={`/auction-pickup/${order.auctionId._id}`}>
+                    <button className="mt-4 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 focus:outline-none">
+                      Confirm Pickup Location
+                    </button>
+                  </Link>
+                )
               )}
             </li>
           ))}

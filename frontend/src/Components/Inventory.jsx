@@ -115,10 +115,10 @@ const Inventory = () => {
                     <span className="font-medium">{product.category}</span>
                   </p>
                   <p className="text-md text-gray-700 font-semibold text-center">
-                    ₹{product.price}
+                    ₹{product.price} per kg
                   </p>
                   <p className="text-sm text-gray-600 text-center">
-                    Quantity: {product.quantity}
+                    Quantity: {product.quantity} kg
                   </p>
                   <button
                     onClick={() => handleDeleteProduct(product._id)}

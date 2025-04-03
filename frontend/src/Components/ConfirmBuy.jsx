@@ -97,7 +97,7 @@ const ConfirmBuy = () => {
 
         {/* Quantity */}
         <div className="relative mb-6">
-          <label className="block text-gray-600 mb-2">Select Quantity</label>
+          <label className="block text-gray-600 mb-2">Select Quantity (kg)</label>
           <select
             className="w-full p-3 border border-gray-300 rounded-xl outline-none focus:ring-2 focus:ring-green-400 bg-white transition"
             value={quantity}

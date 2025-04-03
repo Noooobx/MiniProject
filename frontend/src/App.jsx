@@ -24,6 +24,7 @@ import FinishedOrders from "./Components/FinishedOrders";
 import WonAuctions from "./Components/WonAuctions";
 import PickupForm from "./Components/PickupForm";
 import ResetPassword from "./Components/ResetPassword";
+import Help from "./Components/Help";
 
 function App() {
   return (
@@ -54,6 +55,7 @@ function App() {
         <Route path="/auction-pickup/:id" element={<PickupForm />} />
         <Route path="/reset-password" element={<ResetPassword />} />
         
+        <Route path="/help" element={<Help />} />
         
       </Routes>
       <Footer />

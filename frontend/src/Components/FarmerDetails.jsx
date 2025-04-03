@@ -42,7 +42,8 @@ const FarmerDetails = ({ id }) => {
         <strong>Name:</strong> {sellerDetails.name}
       </p>
       <p className="text-gray-700 text-sm">
-        <strong>Contact:</strong> {sellerDetails.contact}
+        {console.log(sellerDetails)}
+        <strong>Contact:</strong> 9778129217
       </p>
       <p className="text-gray-700 text-sm">
         <strong>Location:</strong> {sellerDetails.location}

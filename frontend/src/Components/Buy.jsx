@@ -73,9 +73,10 @@ export default function Buy() {
           value={sortOption}
           onChange={(e) => setSortOption(e.target.value)}
         >
+          {console.log(sortOption)}
           <option value="">All Categories</option>
-          <option value="leafy">Leafy Vegetables</option>
-          <option value="rooty">Root Vegetables</option>
+          <option value="Leafy Vegetables">Leafy Vegetables</option>
+          <option value="Root Vegetables">Root Vegetables</option>
           <option value="fruits">Fruits</option>
           <option value="grains">Grains</option>
         </select>

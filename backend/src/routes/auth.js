@@ -50,7 +50,7 @@ authRouter.post("/signup", async (req, res) => {
     res.cookie("token", token, {
       httpOnly: false,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "None",
+      sameSite: "lax",
     });
 
     res.status(201).json({ message: "Signup successful", token });
@@ -90,7 +90,7 @@ authRouter.post("/login", async (req, res) => {
     res.cookie("token", token, {
       httpOnly: false, // Security improvement
       secure: process.env.NODE_ENV === "production",
-      sameSite: "None",
+      sameSite: "lax",
     });
 
     res.json({ message: "Login successful", token });

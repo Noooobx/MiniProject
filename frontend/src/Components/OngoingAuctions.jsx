@@ -19,9 +19,9 @@ export default function OngoingAuctions() {
         const res = await axios.get(`${baseUrl}/api/auctions/ongoing`, {
           withCredentials: true,
         });
-  
+        console.log(res);
         setAuctions(res.data);
-  
+
         // Initialize countdowns immediately after auctions are fetched
         const initialTimes = {};
         res.data.forEach((auction) => {
@@ -34,10 +34,10 @@ export default function OngoingAuctions() {
         setLoading(false); // If there's an error, stop loading
       }
     };
-  
+
     fetchBids();
   }, []); // Runs only once when the component mounts
-  
+
   // Update countdowns every second
   useEffect(() => {
     const interval = setInterval(() => {
@@ -49,7 +49,7 @@ export default function OngoingAuctions() {
         return newTimes;
       });
     }, 1000);
-  
+
     return () => clearInterval(interval); // Cleanup on component unmount
   }, [auctions]); // Runs when auctions change
 
@@ -150,6 +150,15 @@ export default function OngoingAuctions() {
                       <span className="font-medium">Highest Bid:</span> ₹
                       {auction.highestBid.amount}
                     </p>
+
+                    {auction.highestBid.bidderId && (
+                      <p className="text-gray-700 flex items-center gap-2">
+                        <IndianRupee className="w-4 h-4 text-gray-800" />
+                        <span className="font-medium">Highest Bidder:</span> ₹
+                        {auction.highestBid.bidderId.name}
+                      </p>
+                    )}
+
                     <p
                       className={`flex items-center gap-2 text-sm sm:text-base ${
                         timeLeft[auction._id]?.includes("Auction Ended")
@@ -163,7 +172,7 @@ export default function OngoingAuctions() {
                     </p>
                   </div>
 
-                  {auction.images && auction.images.length > 0 ? (
+                  {/* {auction.images && auction.images.length > 0 ? (
                     <img
                       src={auction.images[0]}
                       alt="Auction"
@@ -174,7 +183,7 @@ export default function OngoingAuctions() {
                       <ImageOff className="w-4 h-4" />
                       No image available
                     </div>
-                  )}
+                  )} */}
                 </div>
 
                 {/* Bid input */}
