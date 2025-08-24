@@ -50,7 +50,7 @@ authRouter.post("/signup", async (req, res) => {
     res.cookie("token", token, {
       httpOnly: false,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
+      sameSite: "None",
     });
 
     res.status(201).json({ message: "Signup successful", token });
@@ -88,9 +88,9 @@ authRouter.post("/login", async (req, res) => {
     });
 
     res.cookie("token", token, {
-      httpOnly: false, // Security improvement
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
+      httpOnly: true, // safer
+      secure: false, // because localhost is not HTTPS
+      sameSite: "lax", // works for most cases
     });
 
     res.json({ message: "Login successful", token });
@@ -103,7 +103,7 @@ authRouter.post("/login", async (req, res) => {
 authRouter.post("/logout", (req, res) => {
   res.clearCookie("token", {
     httpOnly: false,
-    secure: process.env.NODE_ENV === "production", 
+    secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
   });
 

@@ -1,15 +1,18 @@
 export const checkAuth = async () => {
-    const baseUrl = import.meta.env.VITE_BASE_URL;
-    try {
-      const res = await fetch(`${baseUrl}/api/auth/check`, {
-        credentials: "include",
-      });
-  
-      const data = await res.json();
-      return data.authenticated; // Should return true if logged in
-    } catch (error) {
-      console.error("Auth check failed:", error);
-      return false;
-    }
-  };
-  
+  try {
+    const response = await fetch(
+      `http://localhost:3000/api/auth/check`,
+      {
+        method: "GET",
+        credentials: "include", // ✅ send cookies
+      }
+    );
+
+    if (!response.ok) return false;
+    const data = await response.json();
+    return data.authenticated;
+  } catch (error) {
+    console.log(error)
+    return false;
+  }
+};
