@@ -3,6 +3,7 @@ import Order from "../models/OrderModel.js";
 import Listing from "../models/Listing.js";
 import userAuth from "../middlewares/auth.js";
 import User from "../models/User.js";
+import mongoose from "mongoose";
 
 const orderRouter = express.Router();
 
@@ -86,11 +87,22 @@ orderRouter.get("/", userAuth, async (req, res) => {
 });
 
 // Check for confirmed deals - GET /api/orders/show-pending
-orderRouter.get("/show-pending", async (req, res) => {
+orderRouter.get("/show-pending", userAuth, async (req, res) => {
   try {
-    const orders = await Order.find({ status: { $ne: "pending" } });
+    const userId = new mongoose.Types.ObjectId(req.currentUser.id); // Convert to ObjectId
+    const userEmail = req.currentUser.email; // Logged-in user's email
+
+    // Fetch orders where the logged-in user is either the seller or the buyer
+    const orders = await Order.find({
+      status: "pending",
+      $or: [{ sellerId: userId }, { "buyer.email": userEmail }],
+    })
+      .populate("sellerId", "name location") // Populate seller's name & location
+      .populate("productId", ["name", "image"]); // Populate product name
+
     res.json({ success: true, orders });
   } catch (error) {
+    console.error(error);
     res.status(500).json({ success: false, message: "Server error" });
   }
 });
@@ -126,13 +138,17 @@ orderRouter.patch("/:orderId/pickup", userAuth, async (req, res) => {
     // Find the order
     const order = await Order.findById(orderId);
     if (!order) {
-      return res.status(404).json({ success: false, message: "Order not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Order not found" });
     }
 
     // Find the listing associated with this order
     const listing = await Listing.findById(order.productId);
     if (!listing) {
-      return res.status(404).json({ success: false, message: "Listing not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Listing not found" });
     }
 
     // Reduce listing quantity
@@ -152,6 +168,5 @@ orderRouter.patch("/:orderId/pickup", userAuth, async (req, res) => {
     res.status(500).json({ success: false, message: "Server error" });
   }
 });
-
 
 export default orderRouter;

@@ -10,10 +10,10 @@ export default function Navbar() {
   const [profileOpen, setProfileOpen] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false); // Track auth status
   const navigate = useNavigate();
-let authStatus;
+  let authStatus;
   useEffect(() => {
     const verifyAuth = async () => {
-       authStatus = await checkAuth();
+      authStatus = await checkAuth();
       setIsAuthenticated(authStatus);
     };
     verifyAuth();
@@ -21,11 +21,16 @@ let authStatus;
 
   const handleLogout = async () => {
     try {
-      await axios.post(baseUrl + "/api/auth/logout", {}, { withCredentials: true });
+      await axios.post(
+        baseUrl + "/api/auth/logout",
+        {},
+        { withCredentials: true }
+      );
 
       alert("Logged out successfully");
 
-      document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; sameSite=Lax;";
+      document.cookie =
+        "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; sameSite=Lax;";
 
       navigate("/");
       setIsAuthenticated(false); // Update auth state after logout
@@ -41,16 +46,39 @@ let authStatus;
     <>
       <nav className="bg-white/80 backdrop-blur-md opacity-80 fixed w-full shadow-md py-4 px-6 flex justify-between items-center z-50">
         {/* Logo */}
-        <Link to="/" className="text-2xl font-extrabold text-green-700 tracking-wide">
+        <Link
+          to="/"
+          className="text-2xl font-extrabold text-green-700 tracking-wide"
+        >
           Farm Direct
         </Link>
 
         {/* Desktop Menu */}
         <div className="hidden md:flex gap-8 items-center">
-          <Link to="/buy" className="hover:text-green-700 transition font-medium">Home</Link>
-          <Link to="/news" className="hover:text-green-700 transition font-medium">News</Link>
-          <Link to="/price" className="hover:text-green-700 transition font-medium">Price</Link>
-          <Link to="/benefits" className="hover:text-green-700 transition font-medium">Benefits</Link>
+          <Link
+            to="/buy"
+            className="hover:text-green-700 transition font-medium"
+          >
+            Home
+          </Link>
+          <Link
+            to="/news"
+            className="hover:text-green-700 transition font-medium"
+          >
+            News
+          </Link>
+          {/* <Link */}
+            {/* to="/price" */}
+            {/* className="hover:text-green-700 transition font-medium" */}
+          {/* > */}
+            {/* Price */}
+          {/* </Link> */}
+          <Link
+            to="/benefits"
+            className="hover:text-green-700 transition font-medium"
+          >
+            Benefits
+          </Link>
 
           {/* Show Dashboard only if authenticated */}
           {isAuthenticated && (
@@ -97,17 +125,28 @@ let authStatus;
         </div>
 
         {/* Mobile Menu Button */}
-        <button className="md:hidden text-gray-800" onClick={() => setMenuOpen(true)}>
+        <button
+          className="md:hidden text-gray-800"
+          onClick={() => setMenuOpen(true)}
+        >
           <Menu size={32} />
         </button>
       </nav>
 
       {/* Close dropdown on outside click */}
-      {profileOpen && <div className="fixed inset-0" onClick={() => setProfileOpen(false)}></div>}
+      {profileOpen && (
+        <div
+          className="fixed inset-0"
+          onClick={() => setProfileOpen(false)}
+        ></div>
+      )}
 
       {/* Overlay Background */}
       {menuOpen && (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-md z-40" onClick={() => setMenuOpen(false)}></div>
+        <div
+          className="fixed inset-0 bg-black/40 backdrop-blur-md z-40"
+          onClick={() => setMenuOpen(false)}
+        ></div>
       )}
 
       {/* Mobile Menu */}
@@ -117,19 +156,34 @@ let authStatus;
         `}
       >
         {/* Close Button */}
-        <button className="absolute top-4 right-4 text-gray-800" onClick={() => setMenuOpen(false)}>
+        <button
+          className="absolute top-4 right-4 text-gray-800"
+          onClick={() => setMenuOpen(false)}
+        >
           <X size={28} />
         </button>
 
         {/* Menu Items */}
         <div className="flex flex-col items-center gap-6 mt-16 px-6 text-lg font-medium">
-          <Link to="/" className="hover:text-green-700 transition" onClick={() => setMenuOpen(false)}>
+          <Link
+            to="/"
+            className="hover:text-green-700 transition"
+            onClick={() => setMenuOpen(false)}
+          >
             Home
           </Link>
-          <Link to="/news" className="hover:text-green-700 transition" onClick={() => setMenuOpen(false)}>
+          <Link
+            to="/news"
+            className="hover:text-green-700 transition"
+            onClick={() => setMenuOpen(false)}
+          >
             News
           </Link>
-          <Link to="/price" className="hover:text-green-700 transition" onClick={() => setMenuOpen(false)}>
+          <Link
+            to="/price"
+            className="hover:text-green-700 transition"
+            onClick={() => setMenuOpen(false)}
+          >
             Price
           </Link>
 
@@ -146,7 +200,10 @@ let authStatus;
 
           {/* Show Profile Icon only if authenticated */}
           {isAuthenticated && (
-            <button className="flex items-center gap-2 hover:text-green-700 transition" onClick={() => setProfileOpen(!profileOpen)}>
+            <button
+              className="flex items-center gap-2 hover:text-green-700 transition"
+              onClick={() => setProfileOpen(!profileOpen)}
+            >
               <div className="w-9 h-9 bg-gray-200 rounded-full flex items-center justify-center">
                 <User size={22} className="text-gray-800" />
               </div>

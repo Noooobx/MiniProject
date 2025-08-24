@@ -17,7 +17,7 @@ const FinishedOrders = () => {
         }
 
         const data = await response.json();
-        console.log(data)
+        console.log(data);
         if (data.success) {
           setOrders(data.orders);
         } else {
@@ -31,6 +31,8 @@ const FinishedOrders = () => {
 
     fetchFinishedOrders();
   }, []);
+
+  console.log(orders);
 
   return (
     <div className="min-h-screen flex items-center py-28 justify-center bg-gray-50 p-8">
@@ -48,30 +50,56 @@ const FinishedOrders = () => {
                 key={order._id}
                 className="border border-gray-300 p-6 rounded-xl bg-white hover:shadow-xl transition-all"
               >
-                <div className="flex gap-6 mb-4 flex-wrap">
-                  <div className="flex flex-col justify-between w-full">
-                    <h3 className="text-2xl font-semibold text-gray-800">
-                      {order.productId?.name}
-                    </h3>
-                    <p className="text-sm text-gray-500">
-                      <strong>Category:</strong> {order.productId?.category}
-                    </p>
-                    <p className="text-sm text-gray-500">
-                      <strong>Price:</strong> ₹{order.productId?.price}
-                    </p>
-                    <p className="text-sm text-gray-500">
-                      <strong>Quantity:</strong> {order.quantity}
-                    </p>
-                  </div>
-                </div>
-
+                {/* <div className="flex gap-6 mb-4 flex-wrap"> */}
+                {/* <div className="flex flex-col justify-between w-full"> */}
+                {/* <h3 className="text-2xl font-semibold text-gray-800"> */}
+                {/* {order.productId?.name} */}
+                {/* </h3> */}
+                {/* <p className="text-sm text-gray-500"> */}
+                {/* <strong>Category:</strong> {order.productId?.category} */}
+                {/* </p> */}
+                {/* <p className="text-sm text-gray-500"> */}
+                {/* <strong>Price:</strong> ₹{order.productId?.price} */}
+                {/* </p> */}
+                {/* <p className="text-sm text-gray-500"> */}
+                {/* <strong>Quantity:</strong> {order.quantity} */}
+                {/* </p> */}
+                {/* </div> */}
+                {/* </div> */}
+                {order.productId?.image && (
+                  <img
+                    src={order.productId.image}
+                    className="w-full h-48 object-cover rounded-lg mb-4"
+                  />
+                )}
                 <div className="mt-4">
                   <h4 className="text-xl font-semibold text-gray-700">
                     Order Details
                   </h4>
+
+                  {/* <p className="text-sm text-gray-500"> */}
+                  {/* <strong>Order ID :</strong> {order._id} */}
+                  {/* </p> */}
+                  {order.productId && (
+                    <p className="text-sm text-gray-500">
+                      <strong>Item :</strong> {order.productId.name}
+                    </p>
+                  )}
+
+                  
+                  <p className="text-sm text-gray-500">
+                    <strong>Quanitity :</strong> {order.quantity}
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    <strong>Seller Name :</strong> {order.sellerId.name}
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    <strong>Buyer Name :</strong> {order.buyer.name}
+                  </p>
                   <p className="text-sm text-gray-500">
                     <strong>Pickup Location:</strong> {order.pickupLocation}
                   </p>
+
                   <p className="text-sm text-gray-500">
                     <strong>Pickup Date:</strong>{" "}
                     {new Date(order.pickupDate).toLocaleDateString()}
@@ -80,13 +108,16 @@ const FinishedOrders = () => {
                     <strong>Order Status:</strong> {order.status}
                   </p>
                   <p className="text-sm text-gray-500">
-                    <strong>Order Date:</strong> {new Date(order.createdAt).toLocaleDateString()}
+                    <strong>Order Date:</strong>{" "}
+                    {new Date(order.createdAt).toLocaleDateString()}
                   </p>
                 </div>
               </div>
             ))
           ) : (
-            <p className="text-center text-gray-500">No finished orders found.</p>
+            <p className="text-center text-gray-500">
+              No finished orders found.
+            </p>
           )}
         </div>
       </div>

@@ -48,16 +48,19 @@ router.get("/active", async (req, res) => {
   }
 });
 
-router.get("/ongoing",userAuth, async (req, res) => {
+router.get("/ongoing", userAuth, async (req, res) => {
   try {
     const userId = req.currentUser.id;
 
     const auctions = await Auction.find({
       status: "active",
-      sellerId: { $ne: userId }, // Not equal condition
-    }).sort({
-      startTime: 1,
-    });
+      sellerId: { $ne: userId }, // Exclude auctions created by the current user
+    })
+      .sort({ startTime: 1 })
+      .populate({
+        path: "highestBid.bidderId", // Populating bidderId inside highestBid
+        select: "name", // Only fetch the name field of the user
+      });
 
     res.status(200).json(auctions);
   } catch (error) {
@@ -65,6 +68,7 @@ router.get("/ongoing",userAuth, async (req, res) => {
     res.status(500).json({ error: "Failed to fetch ongoing auctions" });
   }
 });
+
 
 // Get auction details by ID (for polling)
 router.get("/:id", async (req, res) => {
