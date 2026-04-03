@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import LoadingSpinner from "./LoadingSpinner";
 import { checkAuth } from "../utils/authUtils"; // Ensure correct import path
+import BASE_URL from "../utils/constants";
 
 export default function Buy() {
   const [listings, setListings] = useState([]);
@@ -20,7 +21,7 @@ export default function Buy() {
       }
 
       // Fetch listings only if authenticated
-      const baseUrl = import.meta.env.VITE_BASE_URL;
+      const baseUrl = BASE_URL;
       try {
         const res = await fetch(`${baseUrl}/api/product/listings`, {
           credentials: "include",

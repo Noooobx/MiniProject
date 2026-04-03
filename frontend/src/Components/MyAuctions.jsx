@@ -3,9 +3,10 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { Loader2, Trash2 } from "lucide-react";
 import toast from "react-hot-toast";
+import BASE_URL from "../utils/constants";
 
 export default function MyAuctions() {
-  const baseUrl = import.meta.env.VITE_BASE_URL;
+  const baseUrl = BASE_URL;
   const [auctions, setAuctions] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);

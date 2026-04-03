@@ -1,7 +1,8 @@
 import { useState } from "react";
+import BASE_URL from "../utils/constants";
 
 export default function CloudinaryUploadTest({ refreshProducts }) {
-  const baseUrl = import.meta.env.VITE_BASE_URL;
+  const baseUrl = BASE_URL;
 
   const [productName, setProductName] = useState("");
   const [rate, setRate] = useState("");

@@ -3,9 +3,10 @@ import { Link, useNavigate } from "react-router-dom";
 import { Menu, X, Plus, User } from "lucide-react"; // Icons
 import axios from "axios"; // To send requests to the backend
 import { checkAuth } from "../utils/authUtils"; // Import auth check function
+import BASE_URL from "../utils/constants";
 
 export default function Navbar() {
-  const baseUrl = import.meta.env.VITE_BASE_URL;
+  const baseUrl = BASE_URL;
   const [menuOpen, setMenuOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false); // Track auth status

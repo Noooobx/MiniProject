@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
+import BASE_URL from "../utils/constants";
 
 const FinishedOrders = () => {
   const [orders, setOrders] = useState([]);
   const [error, setError] = useState("");
-  const baseUrl = import.meta.env.VITE_BASE_URL;
+  const baseUrl = BASE_URL;
 
   useEffect(() => {
     const fetchFinishedOrders = async () => {

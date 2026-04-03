@@ -3,9 +3,10 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { Clock, ImageOff, IndianRupee, ArrowUpRight } from "lucide-react";
 import LoadingSpinner from "./LoadingSpinner"; // Assuming you have the LoadingSpinner component imported
+import BASE_URL from "../utils/constants";
 
 export default function OngoingAuctions() {
-  const baseUrl = import.meta.env.VITE_BASE_URL;
+  const baseUrl = BASE_URL;
   const [auctions, setAuctions] = useState([]);
   const [error, setError] = useState(null);
   const [bidAmount, setBidAmount] = useState({});

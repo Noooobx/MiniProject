@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useCallback } from "react";
 import AddProduct from "./AddProduct";
 import { Link } from "react-router-dom";
-import LoadingSpinner from "./LoadingSpinner"; // Import your Loading Spinner Component
+import LoadingSpinner from "./LoadingSpinner"; 
+import BASE_URL from "../utils/constants";
 
-const baseUrl = import.meta.env.VITE_BASE_URL;
+const baseUrl = BASE_URL;
 
 const Inventory = () => {
   const [products, setProducts] = useState([]);

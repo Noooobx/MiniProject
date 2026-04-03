@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
+import BASE_URL from "../utils/constants";
 
 const FarmerDetails = ({ id }) => {
     console.log(id)
-    const baseUrl = import.meta.env.VITE_BASE_URL;
+    const baseUrl = BASE_URL;
   const [sellerDetails, setSellerDetails] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
