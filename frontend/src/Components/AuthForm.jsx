@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { checkAuth } from "../utils/authUtils";
+import BASE_URL from "../utils/constants";
 
 export default function AuthForm() {
-  const baseUrl = import.meta.env.VITE_BASE_URL;
-  console.log(baseUrl);
+  const baseUrl = BASE_URL;
   const navigate = useNavigate();
   const [isLogin, setIsLogin] = useState(true);
   const [formData, setFormData] = useState({
@@ -38,7 +38,7 @@ export default function AuthForm() {
   const sendOTP = async () => {
     setError(null);
     try {
-      const response = await fetch(`http://localhost:3000/api/send-otp`, {
+      const response = await fetch(`${BASE_URL}/api/send-otp`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: formData.email }),
@@ -54,7 +54,7 @@ export default function AuthForm() {
   const verifyOTP = async () => {
     setError(null);
     try {
-      const response = await fetch(`http://localhost:3000/api/verify-otp`, {
+      const response = await fetch(`${BASE_URL}/api/verify-otp`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: formData.email, otp }),

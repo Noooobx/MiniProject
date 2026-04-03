@@ -1,7 +1,9 @@
+import BASE_URL from "./constants";
+
 export const checkAuth = async () => {
   try {
     const response = await fetch(
-      `http://localhost:3000/api/auth/check`,
+      `${BASE_URL}/api/auth/check`,
       {
         method: "GET",
         credentials: "include", // ✅ send cookies
