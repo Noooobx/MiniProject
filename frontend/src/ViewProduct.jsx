@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import BASE_URL from "./utils/constants";
 
 const ViewProduct = () => {
   const { productId } = useParams();
@@ -12,7 +13,7 @@ const ViewProduct = () => {
   useEffect(() => {
     const fetchProductDetails = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/api/product/listings/${productId}`);
+        const response = await fetch(`${BASE_URL}/api/product/listings/${productId}`);
         const data = await response.json();
 
         if (response.ok) {
@@ -37,7 +38,7 @@ const ViewProduct = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:5000/api/orders", {
+      const response = await fetch(`${BASE_URL}/api/orders`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

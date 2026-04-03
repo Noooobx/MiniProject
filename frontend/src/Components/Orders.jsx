@@ -9,12 +9,13 @@ import {
   Calendar,
   MapPin,
 } from "lucide-react";
+import BASE_URL from "../utils/constants";
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
   const [error, setError] = useState("");
   const navigate = useNavigate();
-  const baseUrl = import.meta.env.VITE_BASE_URL;
+  const baseUrl = BASE_URL;
 
   // Fetch orders from the backend
   const fetchOrders = async () => {
@@ -79,7 +80,7 @@ const Orders = () => {
   const handleCancelOrder = async (orderId) => {
     try {
       const response = await fetch(
-        `http://localhost:5000/api/orders/${orderId}/cancel`,
+        `${BASE_URL}/api/orders/${orderId}/cancel`,
         {
           method: "PATCH",
         }

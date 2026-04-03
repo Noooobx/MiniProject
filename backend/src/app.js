@@ -24,12 +24,18 @@ dotenv.config();
 
 const app = express();
 
+const origins = process.env.CORS_ORIGIN 
+  ? process.env.CORS_ORIGIN.split(",") 
+  : [
+      "http://localhost:5173",
+      "http://localhost:5174",
+      "http://localhost:5175",
+      "https://mini-project-psi-navy.vercel.app",
+    ];
+
 app.use(
   cors({
-    origin: [
-      "http://localhost:5173",
-      "https://mini-project-psi-navy.vercel.app",
-    ],
+    origin: origins,
     credentials: true,
   })
 );
@@ -50,7 +56,7 @@ app.use("/api/success",auctionOrderRouter);
 
 
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 3000;
 
 connectDB()
   .then(() => {

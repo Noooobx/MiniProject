@@ -68,10 +68,10 @@ export default function Navbar() {
             News
           </Link>
           {/* <Link */}
-            {/* to="/price" */}
-            {/* className="hover:text-green-700 transition font-medium" */}
+          {/* to="/price" */}
+          {/* className="hover:text-green-700 transition font-medium" */}
           {/* > */}
-            {/* Price */}
+          {/* Price */}
           {/* </Link> */}
           <Link
             to="/benefits"
@@ -80,15 +80,26 @@ export default function Navbar() {
             Benefits
           </Link>
 
-          {/* Show Dashboard only if authenticated */}
-          {isAuthenticated && (
+          {/* Desktop Menu */}
+          <div className="hidden md:flex gap-8 items-center">
+            
+            {/* NEW: Smart Farming Button */}
             <Link
-              to="/dashboard"
-              className="flex items-center gap-2 px-6 py-2 bg-green-700 text-white font-semibold rounded-full shadow-md hover:bg-green-800 transition"
+              to="/ai-tools"
+              className="px-5 py-2 rounded-full bg-gradient-to-r from-green-600 to-emerald-500 text-white font-semibold shadow-md hover:from-green-700 hover:to-emerald-600 transform hover:scale-105 transition duration-300 ease-in-out"
             >
-              Dashboard
+              🌱 Smart Farming
             </Link>
-          )}
+
+            {isAuthenticated && (
+              <Link
+                to="/dashboard"
+                className="flex items-center gap-2 px-6 py-2 bg-green-700 text-white font-semibold rounded-full shadow-md hover:bg-green-800 transition"
+              >
+                Dashboard
+              </Link>
+            )}
+          </div>
 
           {/* Profile Icon (Only if authenticated) */}
           {isAuthenticated && (
@@ -125,6 +136,9 @@ export default function Navbar() {
         </div>
 
         {/* Mobile Menu Button */}
+
+        
+
         <button
           className="md:hidden text-gray-800"
           onClick={() => setMenuOpen(true)}
@@ -155,6 +169,13 @@ export default function Navbar() {
           ${menuOpen ? "translate-x-0" : "translate-x-full"}
         `}
       >
+      <Link
+          to="/ai-tools"
+          className="hover:text-green-700 transition"
+          onClick={() => setMenuOpen(false)}
+        >
+          Smart Farming
+        </Link>
         {/* Close Button */}
         <button
           className="absolute top-4 right-4 text-gray-800"

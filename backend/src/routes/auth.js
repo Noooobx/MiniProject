@@ -9,7 +9,7 @@ import dotenv from "dotenv";
 dotenv.config(); // Load environment variables
 
 const authRouter = express.Router();
-const JWT_SECRET = process.env.JWT_SECRET || "default_secret";
+const JWT_SECRET =  "NAndua123";
 
 // POST /api/auth/signup
 authRouter.post("/signup", async (req, res) => {

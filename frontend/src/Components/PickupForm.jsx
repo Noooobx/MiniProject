@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useParams } from "react-router-dom";
+import BASE_URL from "../utils/constants";
 
 const PickupForm = () => {
     const { id } = useParams();
@@ -15,11 +16,11 @@ const PickupForm = () => {
       [e.target.name]: e.target.value
     });
   };
-  const baserUrl = "http://localhost:5000/api/success";
+  const baserUrl = `${BASE_URL}/api/success`;
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch(`http://localhost:5000/api/success/auction-orders/${id}`, {
+      const response = await fetch(`${BASE_URL}/api/success/auction-orders/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

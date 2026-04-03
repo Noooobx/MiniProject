@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import BASE_URL from "../utils/constants";
 
 const OtpTest = () => {
   const [email, setEmail] = useState("");
@@ -9,7 +10,7 @@ const OtpTest = () => {
 
   const sendOtp = async () => {
     try {
-      const response = await axios.post("http://localhost:5000/api/send-otp", { email });
+      const response = await axios.post(`${BASE_URL}/api/send-otp`, { email });
       setOtpSent(true);
       setMessage(response.data.message);
     } catch (error) {
@@ -19,7 +20,7 @@ const OtpTest = () => {
 
   const verifyOtp = async () => {
     try {
-      const response = await axios.post("http://localhost:5000/api/verify-otp", { email, otp });
+      const response = await axios.post(`${BASE_URL}/api/verify-otp`, { email, otp });
       setMessage(response.data.message);
     } catch (error) {
       setMessage(error.response?.data?.message || "Invalid OTP");

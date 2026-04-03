@@ -9,6 +9,14 @@ const emailRouter = express.Router();
 // Store OTPs temporarily (use a database in production)
 const otpStorage = {};
 
+// Nodemailer Transporter Configuration
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: process.env.EMAIL,      // not EMAIL_USER
+    pass: process.env.APP_PASSWORD, // no quotes!
+  },
+});
 
 // Generate OTP
 const generateOTP = () => Math.floor(100000 + Math.random() * 900000).toString();
@@ -23,7 +31,7 @@ emailRouter.post("/send-otp", async (req, res) => {
   otpStorage[email] = otp; // Store OTP temporarily
 
   const mailOptions = {
-    from: process.env.EMAIL_USER,
+    from: "bgmiwizard056@gmail.com",
     to: email,
     subject: "Your OTP Code",
     text: `Your OTP code is: ${otp}`,

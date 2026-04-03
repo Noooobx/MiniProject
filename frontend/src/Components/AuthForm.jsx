@@ -21,7 +21,7 @@ export default function AuthForm() {
       if (isAuthenticated) {
         navigate("/buy");
       }
-    };
+    }; 
     checkUserAuth();
   }, [navigate]);
 

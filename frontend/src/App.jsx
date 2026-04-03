@@ -25,6 +25,8 @@ import WonAuctions from "./Components/WonAuctions";
 import PickupForm from "./Components/PickupForm";
 import ResetPassword from "./Components/ResetPassword";
 import Help from "./Components/Help";
+import AiTools from "./Components/AiTools";
+import YieldPrediction from "./Components/YieldPrediction";
 
 function App() {
   return (
@@ -54,9 +56,9 @@ function App() {
         <Route path="/won-auctions" element={<WonAuctions />} />
         <Route path="/auction-pickup/:id" element={<PickupForm />} />
         <Route path="/reset-password" element={<ResetPassword />} />
-        
+        <Route path="/ai-tools" element={<AiTools />} />
+        <Route path="/yield-prediction" element={<YieldPrediction />} />
         <Route path="/help" element={<Help />} />
-        
       </Routes>
       <Footer />
     </BrowserRouter>

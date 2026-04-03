@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
+import BASE_URL from "../utils/constants";
 
 const ConfirmBuy = () => {
   const location = useLocation();
   const product = location.state?.product || {};
-  const baseUrl = import.meta.env.VITE_BASE_URL;
+  const baseUrl = BASE_URL;
 
   const [quantity, setQuantity] = useState(1);
   const [pickupLocation, setPickupLocation] = useState("");
@@ -17,7 +18,7 @@ const ConfirmBuy = () => {
   useEffect(() => {
     // const fetchUser = async () => {
     //   try {
-    //     const response = await fetch("http://localhost:5000/api/users/me", {
+    //     const response = await fetch(`${BASE_URL}/api/users/me`, {
     //       method: "GET",
     //       headers: {
     //         "Content-Type": "application/json",

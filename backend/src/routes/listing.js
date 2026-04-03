@@ -19,7 +19,7 @@ const upload = multer({ storage });
 
 
 // Upload image to cloudinary.
-listingRouter.post("/upload",userAuth, upload.single("image"), async (req, res) => {
+listingRouter.post("/upload", upload.single("image"), async (req, res) => {
   try {
     res.json({ imageUrl: req.file.path }); // Cloudinary returns the image URL
   } catch (error) {
@@ -92,7 +92,7 @@ listingRouter.get("/listings/seller",userAuth, async (req, res) => {
   try {
     const { id } = req.currentUser;
     const sellerId = id.toString();
-
+userAuth
     if (!mongoose.Types.ObjectId.isValid(sellerId)) {
       return res
         .status(400)

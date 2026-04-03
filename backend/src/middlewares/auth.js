@@ -5,12 +5,13 @@ import User from "../models/User.js";
 const userAuth = async (req, res, next) => {
   try {
     const { token } = req.cookies;
+    console.log(token);
 
     if (!token) {
       return res.status(400).send("Please Login");
     }
 
-    const decodedToken = verify(token, process.env.JWT_SECRET);
+    const decodedToken = verify(token, "NAndua123");
     const userInfo = await User.findById({ _id: decodedToken.userId });
 
     if (!userInfo) {

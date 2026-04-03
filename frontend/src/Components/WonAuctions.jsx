@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import BASE_URL from "../utils/constants";
 
 const WonAuctions = () => {
   const [auctionOrders, setAuctionOrders] = useState([]);
@@ -10,7 +11,7 @@ const WonAuctions = () => {
   // Fetch auction orders from the backend API
   useEffect(() => {
     axios
-      .get("http://localhost:5000/api/success/auction-orders")
+      .get(`${BASE_URL}/api/success/auction-orders`)
       .then((response) => {
         console.log(response);
         setAuctionOrders(response.data.auctionOrders || []); // Ensure it's an array
