@@ -1,10 +1,12 @@
 import { useState, useEffect, useRef } from "react";
-import { MessageCircle, X } from "lucide-react";
+import { MessageCircle, X, Languages, Volume2, VolumeX } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function Chatbot() {
-  const baseUrl = import.meta.env.VITE_CHATBOT_URL;
+  const baseUrl = "https://farmer-chatbot-python-server.vercel.app";
   const [isOpen, setIsOpen] = useState(false);
+  const [language, setLanguage] = useState("en");
+  const [voice, setVoice] = useState(false);
   const [messages, setMessages] = useState([
     { text: "Hello! How can I assist you?", sender: "bot" },
   ]);
@@ -23,7 +25,11 @@ export default function Chatbot() {
       const response = await fetch(baseUrl + "/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt: input }),
+        body: JSON.stringify({ 
+          prompt: input,
+          language: language,
+          voice: voice
+        }),
       });
 
       if (!response.ok) {
@@ -32,6 +38,11 @@ export default function Chatbot() {
 
       const data = await response.json();
       setMessages([...newMessages, { text: data.response, sender: "bot" }]);
+      
+      if (voice && data.audioUrl) {
+        const audio = new Audio(data.audioUrl);
+        audio.play().catch(e => console.error("Audio playback failed:", e));
+      }
     } catch (error) {
       console.error(error);
       setMessages([
@@ -101,25 +112,50 @@ export default function Chatbot() {
               <div ref={messagesEndRef} />
             </div>
 
-            {/* Input */}
-            <div className="p-3 flex gap-2 bg-white border-t">
-              <input
-                type="text"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                className="flex-1 bg-gray-100 p-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-300 text-sm"
-                placeholder="Type a message..."
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") sendMessage();
-                }}
-              />
-              <button
-                onClick={sendMessage}
-                className="bg-green-600 text-white p-2 px-3 rounded-xl shadow-md hover:bg-green-700 transition text-sm"
-                disabled={loading}
-              >
-                ➤
-              </button>
+            {/* Input & Settings */}
+            <div className="p-3 bg-white border-t">
+              <div className="flex items-center justify-between mb-2 px-1">
+                <div className="flex items-center gap-2">
+                  <Languages className="w-4 h-4 text-gray-500" />
+                  <select
+                    value={language}
+                    onChange={(e) => setLanguage(e.target.value)}
+                    className="text-xs bg-gray-50 border border-gray-200 rounded px-1 py-0.5 focus:outline-none"
+                  >
+                    <option value="en">English</option>
+                    <option value="hi">Hindi (हिन्दी)</option>
+                    <option value="ml">Malayalam (മലയാളം)</option>
+                  </select>
+                </div>
+                <button
+                  onClick={() => setVoice(!voice)}
+                  className={`flex items-center gap-1 px-2 py-0.5 rounded text-xs transition-colors ${
+                    voice ? "bg-blue-100 text-blue-600" : "bg-gray-100 text-gray-500"
+                  }`}
+                >
+                  {voice ? <Volume2 className="w-3 h-3" /> : <VolumeX className="w-3 h-3" />}
+                  {voice ? "Voice On" : "Voice Off"}
+                </button>
+              </div>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  className="flex-1 bg-gray-100 p-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-300 text-sm"
+                  placeholder="Type a message..."
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") sendMessage();
+                  }}
+                />
+                <button
+                  onClick={sendMessage}
+                  className="bg-green-600 text-white p-2 px-3 rounded-xl shadow-md hover:bg-green-700 transition text-sm"
+                  disabled={loading}
+                >
+                  ➤
+                </button>
+              </div>
             </div>
           </motion.div>
         )}
