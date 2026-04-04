@@ -11,7 +11,7 @@ const tools = [
     name: "Disease Detection",
     description: "AI-powered crop disease identification from leaf images.",
     icon: <Leaf className="w-10 h-10 text-green-500" />,
-    link: "/disease-detection",
+    link: "https://disease-detection-theta.vercel.app/",
   },
 {
   name: "Fertilizer Recommendation",
@@ -19,15 +19,6 @@ const tools = [
   icon: <Beaker className="w-10 h-10 text-green-500" />,
   link: "https://fertilizerreccomendationpython.onrender.com/",
 },
-
-
-
-  {
-    name: "Smart Monitoring",
-    description: "Real-time monitoring of soil health & crop growth patterns.",
-    icon: <Activity className="w-10 h-10 text-red-500" />,
-    link: "/smart-monitoring",
-  },
 ];
 
 export default function AiTools() {
