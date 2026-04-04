@@ -1,4 +1,4 @@
-import { Brain, Leaf, Beaker, Activity } from "lucide-react";
+import { Brain, Leaf, Beaker } from "lucide-react";
 
 const tools = [
   {
