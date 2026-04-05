@@ -37,10 +37,17 @@ export default function Chatbot() {
       }
 
       const data = await response.json();
-      setMessages([...newMessages, { text: data.response, sender: "bot" }]);
       
-      if (voice && data.audioUrl) {
-        const audio = new Audio(data.audioUrl);
+      // Update: Using 'text' and 'audio' fields as per backend response
+      const botMessage = data.text || data.response || "I'm not sure how to respond.";
+      setMessages([...newMessages, { text: botMessage, sender: "bot" }]);
+      
+      if (voice && data.audio) {
+        // Construct full URL if audio is a relative path, or use as-is if it's a data URI or external link
+        const audioUrl = (data.audio.startsWith("http") || data.audio.startsWith("data:")) 
+          ? data.audio 
+          : `${baseUrl}/${data.audio}`;
+        const audio = new Audio(audioUrl);
         audio.play().catch(e => console.error("Audio playback failed:", e));
       }
     } catch (error) {

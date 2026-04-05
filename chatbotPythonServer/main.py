@@ -1,10 +1,13 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 import os
+import base64
+from io import BytesIO
 from dotenv import load_dotenv
 from fastapi.middleware.cors import CORSMiddleware
 import google.generativeai as genai
-from textblob import TextBlob  # Sentiment analysis
+from textblob import TextBlob
+from gtts import gTTS
 
 # Load environment variables
 load_dotenv()
@@ -20,7 +23,7 @@ app = FastAPI()
 # Enable CORS for frontend connection
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allow all origins
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -28,6 +31,8 @@ app.add_middleware(
 
 class PromptRequest(BaseModel):
     prompt: str
+    language: str = "en"
+    voice: bool = False
 
 # Knowledge base for accurate responses
 platform_knowledge = {
@@ -46,25 +51,55 @@ platform_knowledge = {
 async def generate_text(request: PromptRequest):
     try:
         user_input = request.prompt.lower()
+        language = request.language
+        voice_enabled = request.voice
+
+        response_text = ""
 
         # Check if the question matches a known feature
+        matched = False
         for key, response in platform_knowledge.items():
             if key in user_input:
-                return {"response": response}
+                response_text = response
+                matched = True
+                break
 
-        # Perform sentiment analysis
-        sentiment = TextBlob(user_input).sentiment.polarity
+        if not matched:
+            # Perform sentiment analysis
+            sentiment = TextBlob(user_input).sentiment.polarity
+            if sentiment < -0.3:
+                response_text = "I sense you're feeling down. I'm here to help. What's bothering you?"
+            else:
+                # Fallback to Gemini AI if no match is found
+                # Add language instruction to prompt
+                prompt_with_lang = f"Respond in {language}: {user_input}"
+                model = genai.GenerativeModel("gemini-1.5-pro-latest")
+                response = model.generate_content([{"role": "user", "parts": [{"text": prompt_with_lang}]}])
+                response_text = response.text if hasattr(response, "text") else "I'm not sure. Could you clarify?"
 
-        if sentiment < -0.3:
-            return {"response": "I sense you're feeling down. I'm here to help. What's bothering you?"}
+        audio_base64 = None
+        if voice_enabled:
+            try:
+                # Generate audio using gTTS and save to a BytesIO object (in-memory)
+                tts = gTTS(text=response_text, lang=language)
+                audio_fp = BytesIO()
+                tts.write_to_fp(audio_fp)
+                audio_fp.seek(0)
+                
+                # Convert audio to Base64 to avoid file system issues on Vercel
+                audio_base64 = "data:audio/mp3;base64," + base64.b64encode(audio_fp.read()).decode("utf-8")
+            except Exception as audio_err:
+                print(f"Audio generation error: {audio_err}")
 
-        # Fallback to Gemini AI if no match is found
-        model = genai.GenerativeModel("gemini-1.5-pro-latest")
-        response = model.generate_content([{"role": "user", "parts": [{"text": user_input}]}])
-
-        return {"response": response.text if hasattr(response, "text") else "I'm not sure. Could you clarify?"}
+        # Return both 'text' (Vercel standard) and 'response' (compat)
+        return {
+            "text": response_text,
+            "response": response_text,
+            "audio": audio_base64
+        }
     
     except Exception as e:
+        print(f"Error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/")
