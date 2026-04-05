@@ -3,7 +3,7 @@ import { MessageCircle, X, Languages, Volume2, VolumeX } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function Chatbot() {
-  const baseUrl = "https://farmer-chatbot-python-server.vercel.app";
+  const baseUrl = import.meta.env.VITE_CHATBOT_URL || "https://farmer-chatbot-python-server.vercel.app";
   const [isOpen, setIsOpen] = useState(false);
   const [language, setLanguage] = useState("en");
   const [voice, setVoice] = useState(false);
