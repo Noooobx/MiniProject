@@ -14,37 +14,46 @@ export default function Chatbot() {
   const [loading, setLoading] = useState(false);
   const messagesEndRef = useRef(null);
 
-  const sendMessage = async () => {
-    if (!input.trim()) return;
-    const newMessages = [...messages, { text: input, sender: "user" }];
-    setMessages(newMessages);
-    setInput("");
-    setLoading(true);
+    try {
+      await fetchMessage(newMessages, input, voice);
+    } catch (error) {
+      console.error("Chatbot Error:", error);
+      setMessages([
+        ...newMessages,
+        { text: "Connection error. Please check your backend.", sender: "bot" },
+      ]);
+    }
+    setLoading(false);
+  };
 
+  const fetchMessage = async (newMessages, prompt, useVoice, isRetry = false) => {
     try {
       const response = await fetch(baseUrl + "/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 
-          prompt: input,
+          prompt: prompt,
           language: language,
-          voice: voice
+          voice: useVoice
         }),
       });
 
       if (!response.ok) {
+        // If the server crashes with a 500 error and we had voice on, 
+        // try one more time WITHOUT voice to get the text.
+        if (response.status === 500 && useVoice && !isRetry) {
+          console.warn("Server crashed with Voice On. Retrying with Voice Off...");
+          return await fetchMessage(newMessages, prompt, false, true);
+        }
         throw new Error(`Server returned ${response.status}`);
       }
 
       const data = await response.json();
-      
-      // Update: Using 'text' and 'audio' fields as per backend response
       const botMessage = data.text || data.response || "I'm not sure how to respond.";
       setMessages([...newMessages, { text: botMessage, sender: "bot" }]);
       
-      if (voice) {
-        if (data.audio) {
-          // Attempt to play backend audio if provided (Base64 or URL)
+      if (useVoice) {
+        if (data.audio && !isRetry) {
           const audioUrl = (data.audio.startsWith("http") || data.audio.startsWith("data:")) 
             ? data.audio 
             : `${baseUrl}/${data.audio}`;
@@ -54,18 +63,14 @@ export default function Chatbot() {
             speakText(botMessage, language);
           });
         } else {
-          // Fallback to Browser-side TTS (Web Speech API)
+          // If we had to retry (backend audio failed), use Browser-side TTS
           speakText(botMessage, language);
         }
       }
     } catch (error) {
-      console.error("Chatbot Error:", error);
-      setMessages([
-        ...newMessages,
-        { text: "Connection error. Please check your backend.", sender: "bot" },
-      ]);
+      // Propagate the error if it's not a retryable 500
+      throw error;
     }
-    setLoading(false);
   };
 
   // Helper for Browser TTS (Web Speech API)
