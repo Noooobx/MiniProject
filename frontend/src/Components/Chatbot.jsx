@@ -58,7 +58,8 @@ export default function Chatbot() {
       const botMessage = data.text || data.response || "I'm not sure how to respond.";
       setMessages([...newMessages, { text: botMessage, sender: "bot" }]);
       
-      if (useVoice) {
+      // If the user has voice enabled, we must speak
+      if (voice) { 
         if (data.audio && !isRetry) {
           const audioUrl = (data.audio.startsWith("http") || data.audio.startsWith("data:")) 
             ? data.audio 
@@ -69,7 +70,7 @@ export default function Chatbot() {
             speakText(botMessage, language);
           });
         } else {
-          // If we had to retry (backend audio failed), use Browser-side TTS
+          // If no backend audio (or we are in a retry), use Browser TTS
           speakText(botMessage, language);
         }
       }
