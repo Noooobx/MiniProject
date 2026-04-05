@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { MessageCircle, X, Languages, Volume2, VolumeX } from "lucide-react";
+import { MessageCircle, X, Languages } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function Chatbot() {
@@ -7,7 +7,6 @@ export default function Chatbot() {
 
   const [isOpen, setIsOpen] = useState(false);
   const [language, setLanguage] = useState("en");
-  const [voice, setVoice] = useState(false);
   const [messages, setMessages] = useState([
     { text: "Hello! How can I assist you?", sender: "bot" },
   ]);
@@ -43,6 +42,7 @@ export default function Chatbot() {
         body: JSON.stringify({
           prompt: prompt,
           language: language,
+          voice: false,
         }),
       });
 
@@ -51,26 +51,12 @@ export default function Chatbot() {
       const data = await response.json();
       const botMessage = data.text || data.response || "I'm not sure how to respond.";
       setMessages([...newMessages, { text: botMessage, sender: "bot" }]);
-      if (voice) speakText(botMessage, language);
     } catch (error) {
       console.error("Chatbot Error:", error);
       setMessages([...newMessages, { text: "⚠️ Server is busy. Please try again in a moment.", sender: "bot" }]);
     }
   };
 
-  // Helper for Browser TTS (Web Speech API)
-  const speakText = (text, lang) => {
-    if (!window.speechSynthesis) return;
-    window.speechSynthesis.cancel(); // Stop current speech
-    const utterance = new SpeechSynthesisUtterance(text);
-    
-    // Attempt to match the language
-    if (lang === "hi") utterance.lang = "hi-IN";
-    else if (lang === "ml") utterance.lang = "ml-IN";
-    else utterance.lang = "en-US";
-    
-    window.speechSynthesis.speak(utterance);
-  };
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -146,15 +132,6 @@ export default function Chatbot() {
                     <option value="ml">Malayalam (മലയാളം)</option>
                   </select>
                 </div>
-                <button
-                  onClick={() => setVoice(!voice)}
-                  className={`flex items-center gap-1 px-2 py-0.5 rounded text-xs transition-colors ${
-                    voice ? "bg-blue-100 text-blue-600" : "bg-gray-100 text-gray-500"
-                  }`}
-                >
-                  {voice ? <Volume2 className="w-3 h-3" /> : <VolumeX className="w-3 h-3" />}
-                  {voice ? "Voice On" : "Voice Off"}
-                </button>
               </div>
               <div className="flex gap-2">
                 <input
