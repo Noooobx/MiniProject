@@ -33,7 +33,7 @@ export default function Chatbot() {
       });
 
       if (!response.ok) {
-        throw new Error(`Error: ${response.status}`);
+        throw new Error(`Server returned ${response.status}`);
       }
 
       const data = await response.json();
@@ -42,22 +42,44 @@ export default function Chatbot() {
       const botMessage = data.text || data.response || "I'm not sure how to respond.";
       setMessages([...newMessages, { text: botMessage, sender: "bot" }]);
       
-      if (voice && data.audio) {
-        // Construct full URL if audio is a relative path, or use as-is if it's a data URI or external link
-        const audioUrl = (data.audio.startsWith("http") || data.audio.startsWith("data:")) 
-          ? data.audio 
-          : `${baseUrl}/${data.audio}`;
-        const audio = new Audio(audioUrl);
-        audio.play().catch(e => console.error("Audio playback failed:", e));
+      if (voice) {
+        if (data.audio) {
+          // Attempt to play backend audio if provided (Base64 or URL)
+          const audioUrl = (data.audio.startsWith("http") || data.audio.startsWith("data:")) 
+            ? data.audio 
+            : `${baseUrl}/${data.audio}`;
+          const audio = new Audio(audioUrl);
+          audio.play().catch(e => {
+            console.warn("Backend audio failed, falling back to Browser TTS:", e);
+            speakText(botMessage, language);
+          });
+        } else {
+          // Fallback to Browser-side TTS (Web Speech API)
+          speakText(botMessage, language);
+        }
       }
     } catch (error) {
-      console.error(error);
+      console.error("Chatbot Error:", error);
       setMessages([
         ...newMessages,
-        { text: "Oops! Something went wrong.", sender: "bot" },
+        { text: "Connection error. Please check your backend.", sender: "bot" },
       ]);
     }
     setLoading(false);
+  };
+
+  // Helper for Browser TTS (Web Speech API)
+  const speakText = (text, lang) => {
+    if (!window.speechSynthesis) return;
+    window.speechSynthesis.cancel(); // Stop current speech
+    const utterance = new SpeechSynthesisUtterance(text);
+    
+    // Attempt to match the language
+    if (lang === "hi") utterance.lang = "hi-IN";
+    else if (lang === "ml") utterance.lang = "ml-IN";
+    else utterance.lang = "en-US";
+    
+    window.speechSynthesis.speak(utterance);
   };
 
   useEffect(() => {
