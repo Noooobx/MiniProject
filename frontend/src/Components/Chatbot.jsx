@@ -20,6 +20,11 @@ export default function Chatbot() {
     setInput("");
     setLoading(true);
 
+    // Unlock speech synthesis immediately on user gesture
+    if (voice) {
+      speakText("", language); 
+    }
+
     try {
       await fetchMessage(newMessages, input, voice);
     } catch (error) {
@@ -45,10 +50,10 @@ export default function Chatbot() {
       });
 
       if (!response.ok) {
-        // If the server crashes with a 500 error and we had voice on, 
-        // try one more time WITHOUT voice to get the text.
-        if (response.status === 500 && useVoice && !isRetry) {
-          console.warn("Server crashed with Voice On. Retrying with Voice Off...");
+        // Aggressive Retry: If ANY error happens with Voice on, 
+        // try one more time WITHOUT voice to at least get the text.
+        if (useVoice && !isRetry) {
+          console.warn("Server error with Voice On. Retrying with Voice Off...");
           return await fetchMessage(newMessages, prompt, false, true);
         }
         throw new Error(`Server returned ${response.status}`);
