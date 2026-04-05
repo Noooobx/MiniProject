@@ -6,7 +6,6 @@ from io import BytesIO
 from dotenv import load_dotenv
 from fastapi.middleware.cors import CORSMiddleware
 import google.generativeai as genai
-from textblob import TextBlob
 from gtts import gTTS
 
 # Load environment variables
@@ -14,7 +13,8 @@ load_dotenv()
 api_key = os.getenv("GEMINI_API_KEY")
 
 if not api_key:
-    raise ValueError("GEMINI_API_KEY is missing. Set it in the .env file.")
+    # Use a dummy key if missing to prevent startup crash, but error later
+    api_key = "MISSING"
 
 genai.configure(api_key=api_key)
 
@@ -34,7 +34,6 @@ class PromptRequest(BaseModel):
     language: str = "en"
     voice: bool = False
 
-# Knowledge base for accurate responses
 platform_knowledge = {
     "create auction": "To create an auction, click 'Create Auction' and enter the product name, description, starting price, quantity, start time, end time, and contact details. Click 'Submit' to finalize.",
     "inventory": "Farmers can add products they want to sell in the 'Inventory' section by specifying the category, product name, rate, quantity, and a small image. After submission, the product will be ready for sale.",
@@ -55,43 +54,38 @@ async def generate_text(request: PromptRequest):
         voice_enabled = request.voice
 
         response_text = ""
-
-        # Check if the question matches a known feature
         matched = False
+        
+        # 1. Check Platform Knowledge
         for key, response in platform_knowledge.items():
             if key in user_input:
                 response_text = response
                 matched = True
                 break
 
+        # 2. Fallback to Gemini
         if not matched:
-            # Perform sentiment analysis
-            sentiment = TextBlob(user_input).sentiment.polarity
-            if sentiment < -0.3:
-                response_text = "I sense you're feeling down. I'm here to help. What's bothering you?"
+            if api_key == "MISSING":
+                response_text = "Sorry, I'm missing my AI Brain (Gemini API Key). Please check the backend setup."
             else:
-                # Fallback to Gemini AI if no match is found
-                # Add language instruction to prompt
-                prompt_with_lang = f"Respond in {language}: {user_input}"
+                prompt_with_lang = f"Respond in {language}. User asks: {user_input}"
                 model = genai.GenerativeModel("gemini-1.5-pro-latest")
                 response = model.generate_content([{"role": "user", "parts": [{"text": prompt_with_lang}]}])
                 response_text = response.text if hasattr(response, "text") else "I'm not sure. Could you clarify?"
 
+        # 3. Handle Voice (Base64)
         audio_base64 = None
         if voice_enabled:
             try:
-                # Generate audio using gTTS and save to a BytesIO object (in-memory)
                 tts = gTTS(text=response_text, lang=language)
                 audio_fp = BytesIO()
                 tts.write_to_fp(audio_fp)
                 audio_fp.seek(0)
-                
-                # Convert audio to Base64 to avoid file system issues on Vercel
                 audio_base64 = "data:audio/mp3;base64," + base64.b64encode(audio_fp.read()).decode("utf-8")
             except Exception as audio_err:
-                print(f"Audio generation error: {audio_err}")
+                # Still return text if audio fails
+                print(f"Audio Error: {audio_err}")
 
-        # Return both 'text' (Vercel standard) and 'response' (compat)
         return {
             "text": response_text,
             "response": response_text,
@@ -99,9 +93,9 @@ async def generate_text(request: PromptRequest):
         }
     
     except Exception as e:
-        print(f"Error: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+        print(f"Global Error: {e}")
+        return {"text": f"Error: {str(e)}", "response": f"Error: {str(e)}", "audio": None}
 
 @app.get("/")
 def home():
-    return {"message": "Chatbot with platform-specific knowledge & Gemini AI"}
+    return {"status": "online", "message": "Chatbot ready"}
