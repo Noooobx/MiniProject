@@ -3,7 +3,8 @@ import { MessageCircle, X, Languages, Volume2, VolumeX } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function Chatbot() {
-  const baseUrl = import.meta.env.VITE_CHATBOT_URL || "https://farmer-chatbot-python-server.vercel.app";
+  const baseUrl = "https://farmer-chatbot-python-server.vercel.app";
+
   const [isOpen, setIsOpen] = useState(false);
   const [language, setLanguage] = useState("en");
   const [voice, setVoice] = useState(false);
@@ -20,13 +21,9 @@ export default function Chatbot() {
     setInput("");
     setLoading(true);
 
-    // Unlock speech synthesis immediately on user gesture
-    if (voice) {
-      speakText("", language); 
-    }
 
     try {
-      await fetchMessage(newMessages, input, voice);
+      await fetchMessage(newMessages, input);
     } catch (error) {
       console.error("Chatbot Error:", error);
       setMessages([
@@ -37,51 +34,27 @@ export default function Chatbot() {
     setLoading(false);
   };
 
-  const fetchMessage = async (newMessages, prompt, useVoice, isRetry = false) => {
+
+  const fetchMessage = async (newMessages, prompt) => {
     try {
-      const response = await fetch(baseUrl + "/generate", {
+      const response = await fetch(`${baseUrl}/generate`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           prompt: prompt,
           language: language,
-          voice: useVoice
         }),
       });
 
-      if (!response.ok) {
-        // Aggressive Retry: If ANY error happens with Voice on, 
-        // try one more time WITHOUT voice to at least get the text.
-        if (useVoice && !isRetry) {
-          console.warn("Server error with Voice On. Retrying with Voice Off...");
-          return await fetchMessage(newMessages, prompt, false, true);
-        }
-        throw new Error(`Server returned ${response.status}`);
-      }
+      if (!response.ok) throw new Error(`Server error ${response.status}`);
 
       const data = await response.json();
       const botMessage = data.text || data.response || "I'm not sure how to respond.";
       setMessages([...newMessages, { text: botMessage, sender: "bot" }]);
-      
-      // If the user has voice enabled, we must speak
-      if (voice) { 
-        if (data.audio && !isRetry) {
-          const audioUrl = (data.audio.startsWith("http") || data.audio.startsWith("data:")) 
-            ? data.audio 
-            : `${baseUrl}/${data.audio}`;
-          const audio = new Audio(audioUrl);
-          audio.play().catch(e => {
-            console.warn("Backend audio failed, falling back to Browser TTS:", e);
-            speakText(botMessage, language);
-          });
-        } else {
-          // If no backend audio (or we are in a retry), use Browser TTS
-          speakText(botMessage, language);
-        }
-      }
+      if (voice) speakText(botMessage, language);
     } catch (error) {
-      // Propagate the error if it's not a retryable 500
-      throw error;
+      console.error("Chatbot Error:", error);
+      setMessages([...newMessages, { text: "⚠️ Server is busy. Please try again in a moment.", sender: "bot" }]);
     }
   };
 
