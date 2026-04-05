@@ -1,25 +1,42 @@
 import { useState, useEffect, useRef } from "react";
-import { MessageCircle, X, Languages } from "lucide-react";
+import { MessageCircle, X, Languages, Volume2, VolumeX } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
+const GEMINI_API_KEY = "AIzaSyA_ivfSWsQZW_IIAW3bBmXL_6EpC8NNtsU";
+const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${GEMINI_API_KEY}`;
+
 export default function Chatbot() {
-  const baseUrl = "https://farmer-chatbot-python-server.vercel.app";
 
   const [isOpen, setIsOpen] = useState(false);
   const [language, setLanguage] = useState("en");
+  const [voiceEnabled, setVoiceEnabled] = useState(false); // ✅ added
   const [messages, setMessages] = useState([
     { text: "Hello! How can I assist you?", sender: "bot" },
   ]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const messagesEndRef = useRef(null);
+
+  // ✅ Text-to-Speech function
+  const speakText = (text) => {
+    if (!voiceEnabled) return;
+
+    const speech = new SpeechSynthesisUtterance(text);
+
+    if (language === "hi") speech.lang = "hi-IN";
+    else if (language === "ml") speech.lang = "ml-IN";
+    else speech.lang = "en-US";
+
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(speech);
+  };
+
   const sendMessage = async () => {
     if (!input.trim()) return;
     const newMessages = [...messages, { text: input, sender: "user" }];
     setMessages(newMessages);
     setInput("");
     setLoading(true);
-
 
     try {
       await fetchMessage(newMessages, input);
@@ -33,30 +50,50 @@ export default function Chatbot() {
     setLoading(false);
   };
 
+  const fetchMessage = async (newMessages, prompt, retry = true) => {
+    const langInstruction =
+      language === "hi" ? "Reply in Hindi (हिन्दी)." :
+      language === "ml" ? "Reply in Malayalam (മലയാളം)." :
+      "Reply in English.";
 
-  const fetchMessage = async (newMessages, prompt) => {
     try {
-      const response = await fetch(`${baseUrl}/generate`, {
+      const response = await fetch(GEMINI_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          prompt: prompt,
-          language: language,
-          voice: false,
+          contents: [
+            {
+              parts: [
+                {
+                  text: `You are an agricultural assistant for FarmDirect, helping farmers with crops, soil, fertilizers, pests, yield, and market advice. ${langInstruction}\n\nUser: ${prompt}`
+                }
+              ]
+            }
+          ]
         }),
       });
 
-      if (!response.ok) throw new Error(`Server error ${response.status}`);
+      if (!response.ok) {
+        if (retry && (response.status === 500 || response.status === 429)) {
+          console.warn(`Gemini error ${response.status}, retrying in 2s...`);
+          await new Promise(r => setTimeout(r, 2000));
+          return fetchMessage(newMessages, prompt, false);
+        }
+        throw new Error(`Gemini error ${response.status}`);
+      }
 
       const data = await response.json();
-      const botMessage = data.text || data.response || "I'm not sure how to respond.";
+      const botMessage = data?.candidates?.[0]?.content?.parts?.[0]?.text || "I'm not sure how to respond.";
+      
       setMessages([...newMessages, { text: botMessage, sender: "bot" }]);
+
+      speakText(botMessage); // ✅ added
+
     } catch (error) {
       console.error("Chatbot Error:", error);
-      setMessages([...newMessages, { text: "⚠️ Server is busy. Please try again in a moment.", sender: "bot" }]);
+      setMessages([...newMessages, { text: "⚠️ AI service is temporarily unavailable. Please try again in a moment.", sender: "bot" }]);
     }
   };
-
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -87,6 +124,7 @@ export default function Chatbot() {
             {/* Header */}
             <div className="bg-green-600 text-white p-4 flex justify-between items-center">
               <span className="font-semibold text-lg">Chat Assistant</span>
+
               <button
                 className="text-white hover:scale-110 transition"
                 onClick={() => setIsOpen(false)}
@@ -132,6 +170,19 @@ export default function Chatbot() {
                     <option value="ml">Malayalam (മലയാളം)</option>
                   </select>
                 </div>
+
+                <button
+                  onClick={() => setVoiceEnabled(!voiceEnabled)}
+                  className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium transition-all ${
+                    voiceEnabled 
+                      ? "bg-green-100 text-green-700 border border-green-200" 
+                      : "bg-gray-100 text-gray-500 border border-transparent"
+                  }`}
+                  title={voiceEnabled ? "Turn off voice" : "Turn on voice"}
+                >
+                  {voiceEnabled ? <Volume2 className="w-3.5 h-3.5" /> : <VolumeX className="w-3.5 h-3.5" />}
+                  <span>{voiceEnabled ? "Voice On" : "Voice Off"}</span>
+                </button>
               </div>
               <div className="flex gap-2">
                 <input
