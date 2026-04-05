@@ -1,4 +1,4 @@
-import { Brain, Leaf, Beaker } from "lucide-react";
+import { Brain, Leaf, Beaker, Wheat } from "lucide-react";
 
 const tools = [
   {
@@ -8,7 +8,7 @@ const tools = [
     link: "https://yeild-new.vercel.app/",
   },
   {
-    name: "Disease Detection",
+    name: "Disease Detection Banana",
     description: "AI-powered crop disease identification from leaf images.",
     icon: <Leaf className="w-10 h-10 text-green-500" />,
     link: "https://disease-detection-theta.vercel.app/",
@@ -18,6 +18,12 @@ const tools = [
   description: "AI-powered fertilizer recommendations based on soil nutrients and crop type.",
   icon: <Beaker className="w-10 h-10 text-green-500" />,
   link: "https://fertilizerreccomendationpython.onrender.com/",
+},
+{
+  name: "Disease Detection Paddy",
+  description: "AI-powered paddy disease detection from leaf images for rice crops.",
+  icon: <Wheat className="w-10 h-10 text-yellow-500" />,
+  link: "https://paddy-disease-beige.vercel.app/",
 },
 ];
 
