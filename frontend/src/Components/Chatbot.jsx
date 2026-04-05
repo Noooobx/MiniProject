@@ -13,6 +13,12 @@ export default function Chatbot() {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const messagesEndRef = useRef(null);
+  const sendMessage = async () => {
+    if (!input.trim()) return;
+    const newMessages = [...messages, { text: input, sender: "user" }];
+    setMessages(newMessages);
+    setInput("");
+    setLoading(true);
 
     try {
       await fetchMessage(newMessages, input, voice);
