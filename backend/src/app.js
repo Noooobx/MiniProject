@@ -15,6 +15,7 @@ import otpRouter from "./routes/otpRoutes.js";
 import orderRouter from "./routes/orderRouter.js";
 import userRouter from "./routes/user.js";
 import auctionOrderRouter from "./routes/auctionOrderRouter.js";
+import assistantRouter from "./routes/assistant.js";
 import './utils/cron.js'; 
 
 const __filename = fileURLToPath(import.meta.url);
@@ -24,18 +25,35 @@ dotenv.config();
 
 const app = express();
 
-const origins = process.env.CORS_ORIGIN 
-  ? process.env.CORS_ORIGIN.split(",") 
+const origins = process.env.CORS_ORIGIN
+  ? process.env.CORS_ORIGIN.split(",").map((origin) => origin.trim()).filter(Boolean)
   : [
       "http://localhost:5173",
       "http://localhost:5174",
       "http://localhost:5175",
-      "https://mini-project-psi-navy.vercel.app",
     ];
+
+const allowedOriginPatterns = [
+  /^https:\/\/.*\.vercel\.app$/,
+];
 
 app.use(
   cors({
-    origin: origins,
+    origin(origin, callback) {
+      if (!origin) {
+        return callback(null, true);
+      }
+
+      if (origins.includes(origin)) {
+        return callback(null, true);
+      }
+
+      if (allowedOriginPatterns.some((pattern) => pattern.test(origin))) {
+        return callback(null, true);
+      }
+
+      return callback(new Error(`CORS blocked for origin: ${origin}`));
+    },
     credentials: true,
   })
 );
@@ -53,6 +71,7 @@ app.use("/api", otpRouter);
 app.use("/api/orders", orderRouter);
 app.use("/api/user", userRouter);
 app.use("/api/success",auctionOrderRouter);
+app.use("/api/assistant", assistantRouter);
 
 
 

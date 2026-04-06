@@ -1,8 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { MessageCircle, X, Languages, Volume2, VolumeX } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-
-const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${import.meta.env.VITE_GEMINI_API_KEY}`;
+import BASE_URL from "../utils/constants";
 
 export default function Chatbot() {
 
@@ -50,39 +49,29 @@ export default function Chatbot() {
   };
 
   const fetchMessage = async (newMessages, prompt, retry = true) => {
-    const langInstruction =
-      language === "hi" ? "Reply in Hindi (हिन्दी)." :
-      language === "ml" ? "Reply in Malayalam (മലയാളം)." :
-      "Reply in English.";
-
     try {
-      const response = await fetch(GEMINI_URL, {
+      const response = await fetch(`${BASE_URL}/api/assistant/chat`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify({
-          contents: [
-            {
-              parts: [
-                {
-                  text: `You are an agricultural assistant for FarmDirect, helping farmers with crops, soil, fertilizers, pests, yield, and market advice. ${langInstruction}\n\nUser: ${prompt}`
-                }
-              ]
-            }
-          ]
+          prompt,
+          language,
         }),
       });
 
       if (!response.ok) {
         if (retry && (response.status === 500 || response.status === 429)) {
-          console.warn(`Gemini error ${response.status}, retrying in 2s...`);
+          console.warn(`Assistant error ${response.status}, retrying in 2s...`);
           await new Promise(r => setTimeout(r, 2000));
           return fetchMessage(newMessages, prompt, false);
         }
-        throw new Error(`Gemini error ${response.status}`);
+        const data = await response.json().catch(() => ({}));
+        throw new Error(data.message || `Assistant error ${response.status}`);
       }
 
       const data = await response.json();
-      const botMessage = data?.candidates?.[0]?.content?.parts?.[0]?.text || "I'm not sure how to respond.";
+      const botMessage = data?.text || "I'm not sure how to respond.";
       
       setMessages([...newMessages, { text: botMessage, sender: "bot" }]);
 
