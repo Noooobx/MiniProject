@@ -2,8 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { MessageCircle, X, Languages, Volume2, VolumeX } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
-const GEMINI_API_KEY = "AIzaSyA_ivfSWsQZW_IIAW3bBmXL_6EpC8NNtsU";
-const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${GEMINI_API_KEY}`;
+const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${import.meta.env.VITE_GEMINI_API_KEY}`;
 
 export default function Chatbot() {
 
