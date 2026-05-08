@@ -38,7 +38,7 @@ export default function AuthForm() {
   const sendOTP = async () => {
     setError(null);
     try {
-      const response = await fetch(`http://localhost:3000/api/send-otp`, {
+      const response = await fetch(`${baseUrl}/api/send-otp`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: formData.email }),
@@ -54,7 +54,7 @@ export default function AuthForm() {
   const verifyOTP = async () => {
     setError(null);
     try {
-      const response = await fetch(`http://localhost:3000/api/verify-otp`, {
+      const response = await fetch(`${baseUrl}/api/verify-otp`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: formData.email, otp }),
