@@ -16,7 +16,9 @@ console.log("OTP Email Config:", {
 
 // Configure Nodemailer
 const transporter = nodemailer.createTransport({
-  service: "gmail",
+  host: "smtp.gmail.com",
+  port: 465,
+  secure: true, // Use `true` for port 465
   auth: {
     user: process.env.EMAIL,
     pass: process.env.APP_PASSWORD,
