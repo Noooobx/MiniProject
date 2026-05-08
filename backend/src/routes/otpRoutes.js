@@ -8,6 +8,12 @@ import User from "../models/User.js";
 dotenv.config();
 const otpRouter = express.Router();
 
+// Log email config status on startup (without exposing secrets)
+console.log("OTP Email Config:", {
+  EMAIL: process.env.EMAIL ? `${process.env.EMAIL.substring(0, 4)}...` : "NOT SET",
+  APP_PASSWORD: process.env.APP_PASSWORD ? "SET" : "NOT SET",
+});
+
 // Configure Nodemailer
 const transporter = nodemailer.createTransport({
   service: "gmail",
@@ -36,25 +42,25 @@ otpRouter.post("/send-otp", async (req, res) => {
     // Send OTP via email
     transporter.sendMail(
       {
-        from: "nandunandakishor345@gmail.com",
+        from: process.env.EMAIL,
         to: email,
         subject: "FarmDirect - Your One-Time Password (OTP)",
         text: `Your FarmDirect OTP is: ${otp}. Please do not share this code with anyone.`,
       },
       (error, info) => {
         if (error) {
-          console.error("Email sending failed:", error);
+          console.error("Email sending failed:", error.message, error.code);
           return res
             .status(500)
-            .json({ success: false, message: "Error sending OTP", error });
+            .json({ success: false, message: "Error sending OTP: " + error.message });
         }
         console.log("Email sent:", info.response);
         res.json({ success: true, message: "OTP sent successfully" });
       }
     );
   } catch (error) {
-    console.error("Error in send-otp route:", error);
-    res.status(500).json({ success: false, message: "Error sending OTP" });
+    console.error("Error in send-otp route:", error.message);
+    res.status(500).json({ success: false, message: "Error sending OTP: " + error.message });
   }
 });
 
@@ -110,18 +116,18 @@ otpRouter.post("/login-send-otp", async (req, res) => {
       },
       (error, info) => {
         if (error) {
-          console.error("Email sending failed:", error);
+          console.error("Email sending failed:", error.message, error.code);
           return res
             .status(500)
-            .json({ success: false, message: "Error sending OTP", error });
+            .json({ success: false, message: "Error sending OTP: " + error.message });
         }
         console.log("Email sent:", info.response);
         res.json({ success: true, message: "OTP sent successfully" });
       }
     );
   } catch (error) {
-    console.error("Error in login-send-otp route:", error);
-    res.status(500).json({ success: false, message: "Error sending OTP" });
+    console.error("Error in login-send-otp route:", error.message);
+    res.status(500).json({ success: false, message: "Error sending OTP: " + error.message });
   }
 });
 
