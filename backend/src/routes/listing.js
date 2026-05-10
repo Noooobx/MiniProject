@@ -19,12 +19,21 @@ const upload = multer({ storage });
 
 
 // Upload image to cloudinary.
-listingRouter.post("/upload", upload.single("image"), async (req, res) => {
-  try {
+listingRouter.post("/upload", (req, res) => {
+  upload.single("image")(req, res, (err) => {
+    if (err) {
+      console.error("Multer/Cloudinary Upload Error:", err);
+      // Return the error message inside JSON to prevent HTML parse crashes
+      return res.status(500).json({ error: "Image upload failed", details: err.message || err });
+    }
+    
+    // Check if file was even parsed
+    if (!req.file) {
+      return res.status(400).json({ error: "No image file was provided" });
+    }
+
     res.json({ imageUrl: req.file.path }); // Cloudinary returns the image URL
-  } catch (error) {
-    res.status(500).json({ error: "Image upload failed" });
-  }
+  });
 });
 
 // Add item to inventory
