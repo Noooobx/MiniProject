@@ -14,9 +14,11 @@ console.log("OTP Email Config:", {
   APP_PASSWORD: process.env.APP_PASSWORD ? "SET" : "NOT SET",
 });
 
-// Configure Nodemailer
 const transporter = nodemailer.createTransport({
-  service: "gmail",
+  host: "smtp.gmail.com",
+  port: 587,
+  secure: false, // Use false for 587
+  requireTLS: true,
   auth: {
     user: process.env.EMAIL,
     pass: process.env.APP_PASSWORD,
