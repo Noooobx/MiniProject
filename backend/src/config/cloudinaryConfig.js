@@ -5,8 +5,8 @@ dotenv.config();
 
 cloudinary.config({
   cloud_name: "dfkegp9mp",
-  api_key: "298279617783312",
-  api_secret: "s3Qr7RWmiz58zO_Uu7tSV1iZKTo",
+  api_key: "883253737124756",
+  api_secret: "RUKKzltNzn9rffU-CPybxYvzPsM",
 });
 
 export default cloudinary;
