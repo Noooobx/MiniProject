@@ -85,18 +85,32 @@ router.get("/:id", async (req, res) => {
 router.post("/:id/bid", userAuth, async (req, res) => {
   try {
     const { id: bidderId } = req.currentUser; // ✅ Extract bidderId correctly
-    const { amount } = req.body; // ✅ Get only amount from body
+    const amount = Number(req.body.amount); // ✅ Parse amount as Number
     const auction = await Auction.findById(req.params.id);
 
     if (!auction) return res.status(404).json({ error: "Auction not found" });
     if (Date.now() > new Date(auction.endTime))
       return res.status(400).json({ error: "Auction has ended" });
+    
+    if (isNaN(amount)) return res.status(400).json({ error: "Invalid bid amount" });
 
-    const lastBid = auction.highestBid.amount || auction.startingPrice;
-    if (amount < lastBid + auction.minBidIncrement)
-      return res.status(400).json({
-        error: "Bid must be higher than the last bid + min increment",
-      });
+    // If there are no bids yet, the amount just needs to be >= startingPrice
+    const hasBids = auction.bids && auction.bids.length > 0;
+    
+    if (hasBids) {
+      const minRequiredBid = auction.highestBid.amount + auction.minBidIncrement;
+      if (amount < minRequiredBid) {
+        return res.status(400).json({
+          error: "Bid must be higher than the last bid + min increment",
+        });
+      }
+    } else {
+      if (amount < auction.startingPrice) {
+        return res.status(400).json({
+          error: "Starting bid must be at least the starting price",
+        });
+      }
+    }
 
     auction.bids.push({ bidderId, amount });
     auction.highestBid = { amount, bidderId };
@@ -121,6 +135,25 @@ router.post("/:id/end", async (req, res) => {
     res.status(200).json({ message: "Auction ended successfully", auction });
   } catch (error) {
     res.status(500).json({ error: "Failed to end auction" });
+  }
+});
+
+// Delete an auction
+router.delete("/:id", userAuth, async (req, res) => {
+  try {
+    const auction = await Auction.findById(req.params.id);
+    if (!auction) return res.status(404).json({ error: "Auction not found" });
+
+    // Validate if the current user is the seller who created the auction
+    if (auction.sellerId.toString() !== req.currentUser.id.toString()) {
+       return res.status(403).json({ error: "Unauthorized to delete this auction" });
+    }
+
+    await Auction.findByIdAndDelete(req.params.id);
+    res.status(200).json({ message: "Auction deleted successfully" });
+  } catch (error) {
+    console.error("Delete Error:", error);
+    res.status(500).json({ error: "Failed to delete auction" });
   }
 });
 
