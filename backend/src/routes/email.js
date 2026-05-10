@@ -11,9 +11,7 @@ const otpStorage = {};
 
 // Nodemailer Transporter Configuration
 const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 465,
-  secure: true, // Use `true` for port 465
+  service: "gmail",
   auth: {
     user: process.env.EMAIL,      // not EMAIL_USER
     pass: process.env.APP_PASSWORD, // no quotes!
